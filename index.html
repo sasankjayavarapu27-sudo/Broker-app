@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#2563eb"/>
+<title>Broker Manager</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌾</text></svg>"/>
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQnJva2VyIE1hbmFnZXIiLCJzaG9ydF9uYW1lIjoiQnJva2VyIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJ0aGVtZV9jb2xvciI6IiMyNTYzZWIiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2YxZjVmOSJ9"/>
+<style>*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f1f5f9;overscroll-behavior:none}</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel">
+const {useState,useRef,useEffect}=React;
+const ID=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const INR=(v)=>"₹"+Number(v||0).toLocaleString("en-IN");
+const GAS_URL="https://script.google.com/macros/s/AKfycbwJ4Mx2QMdrhYdTPYATG3ATkbJDVBhb_nWYHJyBaVBTs5zBLddSgQz5evR38k6UUd-b/exec";
+
+let USERS=[{username:"Raja",password:"9393723555",name:"Raja"},{username:"Sasank",password:"9440032636",name:"Sasank"}];
+
+const sheet={
+  ok:()=>!!GAS_URL,
+  get:async(s)=>{try{const r=await fetch(GAS_URL+"?action=getAll&sheet="+s);return r.ok?await r.json():[];}catch{return[];}},
+  add:async(s,d)=>{try{await fetch(GAS_URL+"?action=add&sheet="+s,{method:"POST",body:JSON.stringify(d)});}catch{}},
+  addBulk:async(s,d)=>{try{await fetch(GAS_URL+"?action=addBulk&sheet="+s,{method:"POST",body:JSON.stringify(d)});}catch{}},
+  put:async(s,id,d)=>{try{await fetch(GAS_URL+"?action=update&sheet="+s+"&id="+id,{method:"POST",body:JSON.stringify(d)});}catch{}},
+  del:async(s,id)=>{try{await fetch(GAS_URL+"?action=delete&sheet="+s+"&id="+id,{method:"POST"});}catch{}}
+};
+
+const generatePDF=(partyName,partyType,partyCity,txns,year,getName,getParty,cfg)=>{
+  const isW=partyType==="w";
+  const rows=txns.map(t=>{const o=getParty(isW?"r":"w",isW?t.retailerId:t.wholesalerId);return{date:t.date||"",party:o?.name||"—",location:o?.location||"—",product:t.product||"",qty:t.quantity||t.qty||0};});
+  const tot=rows.reduce((s,r)=>s+Number(r.qty),0);
+  const tr=rows.map((r,i)=>'<tr style="border-bottom:1px solid #e2e8f0"><td style="padding:10px 8px;text-align:center">'+(i+1)+'</td><td style="padding:10px 8px">'+r.date+'</td><td style="padding:10px 8px;font-weight:600">'+r.party+'</td><td style="padding:10px 8px">'+r.location+'</td><td style="padding:10px 8px">'+r.product+'</td><td style="padding:10px 8px;text-align:right">'+r.qty+' T</td></tr>').join("");
+  const html='<html><head><title>Statement-'+partyName+'</title><style>@media print{body{margin:0}@page{margin:20mm}}body{font-family:sans-serif;color:#0f172a;padding:32px;max-width:800px;margin:0 auto}td,th{font-size:13px}</style></head><body><div style="text-align:center;margin-bottom:32px"><div style="font-size:24px;font-weight:900;color:#2563eb">🌾 '+cfg.biz+'</div>'+(cfg.owner?'<div style="font-size:14px;color:#64748b;margin-top:4px">'+cfg.owner+'</div>':'')+'<div style="font-size:13px;color:#94a3b8;margin-top:4px">Transaction Statement — FY '+year+'</div></div><div style="background:#f1f5f9;border-radius:12px;padding:16px;margin-bottom:24px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px"><div><div style="font-size:12px;color:#64748b;font-weight:600">Party</div><div style="font-size:16px;font-weight:800">'+partyName+'</div></div><div><div style="font-size:12px;color:#64748b;font-weight:600">Type</div><div style="font-size:14px;font-weight:600">'+(isW?"Wholesaler":"Retailer")+'</div></div>'+(partyCity?'<div><div style="font-size:12px;color:#64748b;font-weight:600">City</div><div style="font-size:14px;font-weight:600">'+partyCity+'</div></div>':'')+'<div><div style="font-size:12px;color:#64748b;font-weight:600">Txns</div><div style="font-size:14px;font-weight:600">'+rows.length+'</div></div></div><table style="width:100%;border-collapse:collapse;margin-bottom:24px"><thead><tr style="background:#2563eb;color:#fff"><th style="padding:12px 8px;text-align:center;border-radius:8px 0 0 0">#</th><th style="padding:12px 8px;text-align:left">Date</th><th style="padding:12px 8px;text-align:left">Party</th><th style="padding:12px 8px;text-align:left">Location</th><th style="padding:12px 8px;text-align:left">Product</th><th style="padding:12px 8px;text-align:right;border-radius:0 8px 0 0">Qty</th></tr></thead><tbody>'+tr+'</tbody><tfoot><tr style="background:#f1f5f9;font-weight:800"><td colspan="5" style="padding:12px 8px;border-radius:0 0 0 8px">TOTAL</td><td style="padding:12px 8px;text-align:right;border-radius:0 0 8px 0">'+tot+' T</td></tr></tfoot></table><div style="margin-top:48px;display:flex;justify-content:space-between;padding-top:24px;border-top:2px solid #e2e8f0"><div style="text-align:center"><div style="border-top:2px solid #0f172a;padding-top:8px;font-size:13px;font-weight:600;min-width:160px">Authorized Signature</div></div><div style="text-align:center"><div style="border-top:2px solid #0f172a;padding-top:8px;font-size:13px;font-weight:600;min-width:160px">Party Signature</div></div></div><div style="text-align:center;margin-top:32px;font-size:11px;color:#94a3b8">Generated '+new Date().toLocaleDateString("en-IN",{day:"numeric",month:"long",year:"numeric"})+' | '+cfg.biz+'</div></body></html>';
+  const w=window.open("","_blank");if(w){w.document.write(html);w.document.close();setTimeout(()=>w.print(),600);}
+};
+
+const ModalShell=({open,title,onClose,children,bg,borderC,textC,mutedC,bgC})=>{
+  if(!open)return null;
+  return(
+    <div style={{position:"fixed",top:0,left:0,right:0,bottom:0,zIndex:9999}}>
+      <div onClick={onClose} style={{position:"fixed",top:0,left:0,right:0,bottom:0,background:"rgba(0,0,0,0.4)",zIndex:9999}}></div>
+      <div style={{position:"fixed",left:0,right:0,bottom:0,background:bgC||"#fff",borderRadius:"24px 24px 0 0",maxHeight:"88vh",display:"flex",flexDirection:"column",zIndex:10000}}>
+        <div style={{padding:"16px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"1px solid "+(borderC||"#e2e8f0"),flexShrink:0}}>
+          <span style={{fontWeight:800,fontSize:18,color:textC||"#0f172a"}}>{title}</span>
+          <button type="button" onClick={onClose} style={{width:36,height:36,borderRadius:99,border:"none",background:bg||"#f1f5f9",fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",color:mutedC||"#64748b"}}>✕</button>
+        </div>
+        <div style={{padding:20,overflowY:"auto",flex:1,WebkitOverflowScrolling:"touch",overscrollBehavior:"contain"}}>{children}</div>
+      </div>
+    </div>
+  );
+};
+
+function App(){
+  const[loggedIn,setLoggedIn]=useState(false);
+  const[loginUser,setLoginUser]=useState("");
+  const[loginPass,setLoginPass]=useState("");
+  const[loginErr,setLoginErr]=useState("");
+  const[currentUser,setCurrentUser]=useState(null);
+  const[dark,setDark]=useState(false);
+  const[W,setW]=useState([]);
+  const[R,setR]=useState([]);
+  const[T,setT]=useState([]);
+  const[cfg,setCfg]=useState({biz:"Fertilizer Brokerage",owner:"",wRate:50,rRate:50});
+  const[tab,setTab]=useState("home");
+  const[form,setForm]=useState(null);
+  const[edit,setEdit]=useState(null);
+  const[q,setQ]=useState("");
+  const[yr,setYr]=useState(String(new Date().getFullYear()));
+  const[detail,setDetail]=useState(null);
+  const[toast,setToast]=useState("");
+  const[loading,setLoading]=useState(false);
+  const[bulkText,setBulkText]=useState("");
+  const[bulkPreview,setBulkPreview]=useState([]);
+  const[bulkImporting,setBulkImporting]=useState(false);
+  const[editProfile,setEditProfile]=useState(false);
+  const[profName,setProfName]=useState("");
+  const[oldPw,setOldPw]=useState("");
+  const[newPw,setNewPw]=useState("");
+  const[confirmPw,setConfirmPw]=useState("");
+  const fileRef=useRef(null);
+
+  const LT={primary:"#2563eb",primaryLight:"#dbeafe",primaryDark:"#1d4ed8",success:"#059669",successLight:"#d1fae5",warn:"#d97706",warnLight:"#fef3c7",danger:"#dc2626",dangerLight:"#fee2e2",purple:"#7c3aed",purpleLight:"#ede9fe",bg:"#f1f5f9",card:"#ffffff",text:"#0f172a",muted:"#64748b",border:"#e2e8f0"};
+  const DT={primary:"#3b82f6",primaryLight:"#1e3a5f",primaryDark:"#2563eb",success:"#10b981",successLight:"#064e3b",warn:"#f59e0b",warnLight:"#451a03",danger:"#ef4444",dangerLight:"#450a0a",purple:"#8b5cf6",purpleLight:"#2e1065",bg:"#0f172a",card:"#1e293b",text:"#f1f5f9",muted:"#94a3b8",border:"#334155"};
+  const $=dark?DT:LT;
+  const IS={width:"100%",border:"1.5px solid "+$.border,borderRadius:12,padding:"14px 16px",fontSize:16,outline:"none",boxSizing:"border-box",fontFamily:"inherit",background:$.card,color:$.text,WebkitAppearance:"none"};
+
+  useEffect(()=>{if(!loggedIn||!sheet.ok())return;(async()=>{setLoading(true);const[w,r,t]=await Promise.all([sheet.get("Wholesalers"),sheet.get("Retailers"),sheet.get("Transactions")]);setW(w);setR(r);setT(t);setLoading(false);})();},[loggedIn]);
+
+  const flash=(m)=>{setToast(m);setTimeout(()=>setToast(""),2500);};
+  const nm=(type,id)=>(type==="w"?W:R).find(p=>p.id===id)?.name||"—";
+  const gp=(type,id)=>(type==="w"?W:R).find(p=>p.id===id);
+  const yT=T.filter(t=>t.date?.startsWith(yr));
+  const biz=yT.reduce((s,t)=>s+Number(t.quantity||t.qty||0),0);
+  const comm=yT.reduce((s,t)=>s+Number(t.wholesalerCommission||t.wc||0)+Number(t.retailerCommission||t.rc||0),0);
+  const pend=yT.filter(t=>t.status==="pending");
+  const years=[...new Set(T.map(t=>t.date?.slice(0,4)).concat([String(new Date().getFullYear())]))].filter(Boolean).sort().reverse();
+  const calc=(e)=>{const a=Number(e.qty||0)*Number(e.rate||0);const t=Number(e.qty||0);return{...e,amt:a,wc:Math.round(t*Number(cfg.wRate||0)),rc:Math.round(t*Number(cfg.rRate||0))};};
+  const doLogin=()=>{const u=USERS.find(u=>u.username.toLowerCase()===loginUser.toLowerCase()&&u.password===loginPass);if(u){setCurrentUser(u);setLoggedIn(true);setLoginErr("");setProfName(u.name);}else setLoginErr("Invalid credentials");};
+  const saveProfile=()=>{if(profName.trim()){const i=USERS.findIndex(u=>u.username===currentUser.username);if(i>=0)USERS[i].name=profName.trim();setCurrentUser({...currentUser,name:profName.trim()});}if(oldPw&&newPw&&confirmPw){if(oldPw!==currentUser.password){flash("Wrong password");return;}if(newPw!==confirmPw){flash("Mismatch");return;}const i=USERS.findIndex(u=>u.username===currentUser.username);if(i>=0)USERS[i].password=newPw;setCurrentUser({...currentUser,password:newPw});setOldPw("");setNewPw("");setConfirmPw("");flash("Password updated!");}else flash("Saved!");setEditProfile(false);};
+  const saveParty=async()=>{if(!edit?.name?.trim())return;const isW=edit._t==="w";const sh=isW?"Wholesalers":"Retailers";const[list,set]=isW?[W,setW]:[R,setR];const row={id:edit.id||ID(),name:edit.name,phone:edit.phone||"",location:edit.location||"",gst:edit.gst||"",notes:edit.notes||""};if(edit.id){set(list.map(p=>p.id===edit.id?row:p));await sheet.put(sh,edit.id,row);}else{set([...list,row]);await sheet.add(sh,row);}setForm(null);setEdit(null);flash(edit.id?"Updated":"Added");};
+  const delParty=async(type,id)=>{if(!confirm("Delete?"))return;const[sh,list,set]=type==="w"?["Wholesalers",W,setW]:["Retailers",R,setR];set(list.filter(p=>p.id!==id));await sheet.del(sh,id);if(detail?.id===id)setDetail(null);flash("Removed");};
+  const saveTxn=async()=>{if(!edit?.wid||!edit?.rid||!edit?.product)return;const row={id:edit.id||ID(),date:edit.date,wholesalerId:edit.wid,retailerId:edit.rid,product:edit.product,quantity:edit.qty,unit:"Tons",rate:edit.rate,amount:edit.amt,wholesalerCommission:edit.wc,retailerCommission:edit.rc,status:edit.status,notes:edit.notes||""};if(edit.id){setT(T.map(t=>t.id===edit.id?row:t));await sheet.put("Transactions",edit.id,row);}else{setT([...T,row]);await sheet.add("Transactions",row);}setForm(null);setEdit(null);flash(edit.id?"Updated":"Saved");};
+  const delTxn=async(id)=>{if(!confirm("Delete?"))return;setT(T.filter(t=>t.id!==id));await sheet.del("Transactions",id);flash("Removed");};
+  const toggleTxn=async(t)=>{const ns=t.status==="collected"?"pending":"collected";setT(T.map(x=>x.id===t.id?{...x,status:ns}:x));await sheet.put("Transactions",t.id,{status:ns});};
+  const openNewTxn=()=>{setEdit({id:"",date:new Date().toISOString().slice(0,10),wid:detail?.type==="w"?detail.id:"",rid:detail?.type==="r"?detail.id:"",product:"",qty:"",rate:"",amt:0,wc:0,rc:0,status:"pending",notes:""});setForm("txn");};
+  const openEditTxn=(t)=>{setEdit({id:t.id,date:t.date,wid:t.wholesalerId,rid:t.retailerId,product:t.product,qty:t.quantity,rate:t.rate,amt:t.amount,wc:t.wholesalerCommission,rc:t.retailerCommission,status:t.status,notes:t.notes});setForm("txn");};
+  const openNewParty=(type)=>{setEdit({id:"",name:"",phone:"",location:"",gst:"",notes:"",_t:type});setForm("party");};
+  const genReport=(party,type)=>{const txns=yT.filter(t=>type==="w"?t.wholesalerId===party.id:t.retailerId===party.id);generatePDF(party.name,type,party.location,txns,yr,nm,gp,cfg);};
+  const parseBulk=(text)=>{const lines=text.split("\n").map(l=>l.trim()).filter(Boolean);const p=[];for(const line of lines){const parts=line.split(/[,\t|;]+/).map(s=>s.trim()).filter(Boolean);if(parts.length>=1){const name=parts[0];const loc=parts[1]||"";const exists=R.some(r=>r.name.toLowerCase()===name.toLowerCase());const dup=p.some(x=>x.name.toLowerCase()===name.toLowerCase());if(!dup&&name)p.push({name,location:loc,exists});}}return p;};
+  const handleFile=async(e)=>{const f=e.target.files?.[0];if(!f)return;try{const t=await f.text();setBulkText(t);setBulkPreview(parseBulk(t));}catch{flash("Error");}e.target.value="";};
+  const doBulkImport=async()=>{const add=bulkPreview.filter(p=>!p.exists);if(!add.length){flash("No new");return;}setBulkImporting(true);const rows=add.map(p=>({id:ID(),name:p.name,phone:"",location:p.location,gst:"",notes:""}));setR(prev=>[...prev,...rows]);if(sheet.ok())await sheet.addBulk("Retailers",rows);setBulkImporting(false);setBulkText("");setBulkPreview([]);setForm(null);flash(rows.length+" added!");};
+  const closeForm=()=>{setForm(null);setEdit(null);};
+  const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const mData=months.map((m,i)=>{const mt=yT.filter(t=>Number(t.date?.slice(5,7))===i+1);return{m,biz:mt.reduce((s,t)=>s+Number(t.quantity||t.qty||0),0),n:mt.length};});
+  const mMax=Math.max(...mData.map(d=>d.biz),1);
+
+  const sp=(s)=>{const m={pending:[$.warnLight,$.warn],collected:[$.successLight,$.success],cancelled:[$.dangerLight,$.danger]};const[bg,fg]=m[s]||m.pending;return <span style={{background:bg,color:fg,fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:99,textTransform:"uppercase"}}>{s==="pending"?"credit":s}</span>;};
+  const av=(emoji="🌾",bg=$.primaryLight,size=44)=><div style={{width:size,height:size,borderRadius:size*.3,background:bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:size*.45,flexShrink:0}}>{emoji}</div>;
+  const met=(icon,label,value,accent)=><div style={{background:accent+"18",borderRadius:16,padding:"14px 12px",textAlign:"center",flex:1,minWidth:0}}><div style={{fontSize:20,marginBottom:2}}>{icon}</div><div style={{fontSize:17,fontWeight:800,color:accent,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{value}</div><div style={{fontSize:11,color:$.muted,fontWeight:600,marginTop:2}}>{label}</div></div>;
+  const btn=(text,onClick,bg=$.primary,fg="#fff",full=false,small=false,extra={})=><button onClick={onClick} style={{background:bg,color:fg,border:"none",borderRadius:14,padding:small?"10px 18px":"15px 24px",fontSize:small?14:16,fontWeight:700,cursor:"pointer",display:"inline-flex",alignItems:"center",justifyContent:"center",gap:8,width:full?"100%":"auto",fontFamily:"inherit",...extra}}>{text}</button>;
+  const gb=(text,onClick,color=$.muted)=><button onClick={onClick} style={{background:"none",border:"none",color,fontSize:14,fontWeight:600,cursor:"pointer",padding:"8px 12px",borderRadius:10,fontFamily:"inherit"}}>{text}</button>;
+  const cd=(children,onClick,style={})=><div onClick={onClick} style={{background:$.card,borderRadius:16,padding:16,...style,...(onClick?{cursor:"pointer"}:{})}}>{children}</div>;
+  const inp=(label,props)=><div style={{marginBottom:16}}><label style={{display:"block",fontSize:13,fontWeight:600,color:$.muted,marginBottom:6}}>{label}</label><input style={IS} {...props}/></div>;
+  const sel=(label,options,props)=><div style={{marginBottom:16}}><label style={{display:"block",fontSize:13,fontWeight:600,color:$.muted,marginBottom:6}}>{label}</label><select style={{...IS,color:props.value?$.text:$.muted}} {...props}><option value="">Choose...</option>{options.map(o=><option key={o.v} value={o.v}>{o.l}</option>)}</select></div>;
+
+  if(!loggedIn)return(
+    <div style={{minHeight:"100vh",background:"linear-gradient(135deg,#1e3a5f,#2563eb,#1d4ed8)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+      <div style={{width:"100%",maxWidth:380}}>
+        <div style={{textAlign:"center",marginBottom:40}}><div style={{fontSize:64,marginBottom:12}}>🌾</div><div style={{fontSize:28,fontWeight:900,color:"#fff"}}>Broker Manager</div><div style={{fontSize:14,color:"rgba(255,255,255,0.7)",marginTop:6}}>Fertilizer Brokerage</div></div>
+        <div style={{background:"rgba(255,255,255,0.95)",borderRadius:24,padding:28,boxShadow:"0 20px 60px rgba(0,0,0,0.3)"}}>
+          <div style={{fontSize:20,fontWeight:800,marginBottom:24,textAlign:"center"}}>Welcome Back</div>
+          <div style={{marginBottom:16}}><label style={{display:"block",fontSize:13,fontWeight:600,color:"#64748b",marginBottom:6}}>Username</label><input value={loginUser} onChange={e=>{setLoginUser(e.target.value);setLoginErr("");}} placeholder="Username" onKeyDown={e=>e.key==="Enter"&&doLogin()} style={{width:"100%",border:"1.5px solid #e2e8f0",borderRadius:12,padding:"14px 16px",fontSize:16,outline:"none",boxSizing:"border-box",background:"#f1f5f9"}}/></div>
+          <div style={{marginBottom:20}}><label style={{display:"block",fontSize:13,fontWeight:600,color:"#64748b",marginBottom:6}}>Password</label><input type="password" value={loginPass} onChange={e=>{setLoginPass(e.target.value);setLoginErr("");}} placeholder="Password" onKeyDown={e=>e.key==="Enter"&&doLogin()} style={{width:"100%",border:"1.5px solid #e2e8f0",borderRadius:12,padding:"14px 16px",fontSize:16,outline:"none",boxSizing:"border-box",background:"#f1f5f9"}}/></div>
+          {loginErr&&<div style={{color:"#dc2626",fontSize:13,fontWeight:600,marginBottom:14,textAlign:"center",background:"#fee2e2",padding:"8px 12px",borderRadius:10}}>{loginErr}</div>}
+          <button onClick={doLogin} style={{width:"100%",background:"#2563eb",color:"#fff",border:"none",borderRadius:14,padding:"16px",fontSize:17,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>Login →</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const txnCard=(t)=>cd(<div>
+    <div style={{display:"flex",alignItems:"flex-start",gap:12}}>{av("🌾",$.primaryLight,42)}<div style={{flex:1,minWidth:0}}><div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}><span style={{fontWeight:800,fontSize:14,color:$.text}}>{nm("w",t.wholesalerId)} → {nm("r",t.retailerId)}</span>{sp(t.status)}</div><div style={{fontSize:13,fontWeight:600,color:$.primary,marginTop:6}}>{t.product} · {t.quantity} T</div><div style={{display:"flex",gap:14,marginTop:6,fontSize:12,color:$.muted,flexWrap:"wrap"}}><span>📅 {t.date}</span><span>Rate: {INR(t.rate)}/T</span></div></div></div>
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:12,paddingTop:12,borderTop:"1px solid "+$.border}}><div><span style={{fontSize:20,fontWeight:900,color:$.text}}>{INR(t.amount||t.amt)}</span><span style={{fontSize:12,color:$.success,fontWeight:700,marginLeft:10}}>+{INR(Number(t.wholesalerCommission||t.wc||0)+Number(t.retailerCommission||t.rc||0))}</span></div><div style={{display:"flex",gap:2}}>{gb("✏️",()=>openEditTxn(t))}{gb(t.status==="collected"?"↩️":"✅",()=>toggleTxn(t))}{gb("🗑️",()=>delTxn(t.id),$.danger)}</div></div>
+  </div>);
+
+  const renderHome=()=>(
+    <div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}><div><div style={{fontSize:22,fontWeight:900,color:$.text}}>{cfg.biz}</div><div style={{fontSize:13,color:$.muted,marginTop:2}}>Hi {currentUser?.name} · {yr}</div></div><div style={{display:"flex",gap:8,alignItems:"center"}}><select value={yr} onChange={e=>setYr(e.target.value)} style={{border:"1.5px solid "+$.border,borderRadius:12,padding:"8px 12px",fontSize:14,fontWeight:600,background:$.card,color:$.text}}>{years.map(y=><option key={y}>{y}</option>)}</select><button onClick={()=>{setLoggedIn(false);setLoginUser("");setLoginPass("");}} style={{width:36,height:36,borderRadius:99,border:"1.5px solid "+$.border,background:$.card,fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>🚪</button></div></div>
+      <div style={{display:"flex",gap:10,marginBottom:20}}>{met("💼","Business",biz+" T",$.primary)}{met("💰","Commission",INR(comm),$.success)}{met("⏳","Credit",pend.length,$.warn)}</div>
+      {cd(<div><div style={{fontWeight:800,fontSize:15,marginBottom:14,color:$.text}}>Monthly Revenue</div><div style={{display:"flex",alignItems:"flex-end",gap:4,height:100}}>{mData.map((d,i)=><div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3}}><div style={{width:"100%",display:"flex",flexDirection:"column",justifyContent:"flex-end",height:72}}><div style={{width:"100%",background:"linear-gradient(to top,"+$.primary+","+$.primaryDark+")",borderRadius:"4px 4px 0 0",height:Math.max((d.biz/mMax)*100,d.biz>0?6:0)+"%"}}/></div><span style={{fontSize:9,color:$.muted,fontWeight:700}}>{d.m}</span></div>)}</div></div>,null,{marginBottom:20})}
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}><span style={{fontWeight:800,fontSize:15,color:$.text}}>Recent Transactions</span>{gb("View All →",()=>setTab("txns"),$.primary)}</div>
+      {yT.length===0?cd(<div style={{textAlign:"center",padding:24}}><div style={{fontSize:48}}>📋</div><div style={{fontWeight:700,color:$.muted,marginTop:8}}>No transactions yet</div>{btn("+ New Transaction",openNewTxn,$.primary,"#fff",false,false,{marginTop:16})}</div>):
+        <div style={{display:"flex",flexDirection:"column",gap:10}}>{yT.slice(-5).reverse().map(t=><div key={t.id}>{cd(<div style={{display:"flex",alignItems:"center",gap:12}}>{av()}<div style={{flex:1,minWidth:0}}><div style={{fontWeight:700,fontSize:14,color:$.text,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{nm("w",t.wholesalerId)} → {nm("r",t.retailerId)}</div><div style={{fontSize:12,color:$.muted,marginTop:2}}>{t.product} · {t.quantity} T</div></div><div style={{textAlign:"right",flexShrink:0}}><div style={{fontWeight:800,fontSize:15,color:$.text}}>{INR(t.amount||t.amt)}</div>{sp(t.status)}</div></div>,()=>openEditTxn(t))}</div>)}</div>}
+    </div>
+  );
+
+  const renderTxns=()=>{
+    const list=yT.filter(t=>{if(!q)return true;const s=q.toLowerCase();return nm("w",t.wholesalerId).toLowerCase().includes(s)||nm("r",t.retailerId).toLowerCase().includes(s)||t.product?.toLowerCase().includes(s);}).slice().reverse();
+    const vol=list.reduce((s,t)=>s+Number(t.quantity||t.qty||0),0);
+    const cm=list.reduce((s,t)=>s+Number(t.wholesalerCommission||t.wc||0)+Number(t.retailerCommission||t.rc||0),0);
+    return(
+      <div>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}><div style={{fontSize:22,fontWeight:900,color:$.text}}>Transactions</div><select value={yr} onChange={e=>setYr(e.target.value)} style={{border:"1.5px solid "+$.border,borderRadius:12,padding:"8px 12px",fontSize:14,fontWeight:600,background:$.card,color:$.text}}>{years.map(y=><option key={y}>{y}</option>)}</select></div>
+        <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search..." style={{...IS,marginBottom:12}}/>
+        <div style={{display:"flex",gap:8,marginBottom:16}}>{met("📊","Count",list.length,$.primary)}{met("💼","Volume",vol+" T",$.success)}{met("💰","Comm",INR(cm),$.purple)}</div>
+        {list.length===0?cd(<div style={{textAlign:"center",padding:40}}><div style={{fontSize:48}}>💰</div><div style={{fontWeight:700,color:$.muted}}>No transactions</div>{btn("+ New",openNewTxn,$.primary,"#fff",false,false,{marginTop:16})}</div>):
+          <div style={{display:"flex",flexDirection:"column",gap:12}}>{list.map(t=><div key={t.id}>{txnCard(t)}</div>)}</div>}
+      </div>
+    );
+  };
+
+  const renderPartyDetail=()=>{
+    const{id,type}=detail;const p=(type==="w"?W:R).find(x=>x.id===id);if(!p){setDetail(null);return null;}
+    const txns=T.filter(t=>type==="w"?t.wholesalerId===id:t.retailerId===id).slice().reverse();
+    const yTxns=yT.filter(t=>type==="w"?t.wholesalerId===id:t.retailerId===id);
+    const b=yTxns.reduce((s,t)=>s+Number(t.quantity||t.qty||0),0);
+    const cm=yTxns.reduce((s,t)=>s+Number(type==="w"?(t.wholesalerCommission||t.wc||0):(t.retailerCommission||t.rc||0)),0);
+    return(
+      <div>
+        {gb("← Back",()=>setDetail(null),$.primary)}
+        {cd(<div><div style={{display:"flex",alignItems:"center",gap:14,marginBottom:14}}>{av(type==="w"?"🏭":"🏪",type==="w"?$.primaryLight:$.purpleLight,56)}<div style={{flex:1}}><div style={{fontSize:20,fontWeight:900,color:$.text}}>{p.name}</div><span style={{background:type==="w"?$.primaryLight:$.purpleLight,color:type==="w"?$.primary:$.purple,fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:99,textTransform:"uppercase"}}>{type==="w"?"wholesaler":"retailer"}</span></div><div style={{display:"flex",gap:4}}>{gb("✏️",()=>{setEdit({...p,_t:type});setForm("party");})}{gb("📄",()=>genReport(p,type),$.success)}</div></div>{p.phone&&<div style={{fontSize:14,color:$.muted,marginBottom:4}}>📞 <a href={"tel:"+p.phone} style={{color:$.primary}}>{p.phone}</a></div>}{p.location&&<div style={{fontSize:14,color:$.muted,marginBottom:4}}>📍 {p.location}</div>}{p.gst&&<div style={{fontSize:14,color:$.muted}}>GST: {p.gst}</div>}</div>,null,{marginTop:8,marginBottom:16})}
+        <div style={{display:"flex",gap:10,marginBottom:16}}>{met("📊","Txns",yTxns.length,$.primary)}{met("💼","Business",b+" T",$.success)}{met("💰","Comm",INR(cm),$.purple)}</div>
+        {btn("📄 Download Statement",()=>genReport(p,type),$.success,"#fff",true,false,{marginBottom:16})}
+        <div style={{fontWeight:800,fontSize:15,color:$.text,marginBottom:12}}>Transactions</div>
+        {txns.length===0?cd(<div style={{textAlign:"center",padding:32}}><div style={{fontSize:40}}>📋</div><div style={{fontWeight:700,color:$.muted,fontSize:14}}>None</div>{btn("+ New",openNewTxn,$.primary,"#fff",false,true,{marginTop:14})}</div>):
+          <div style={{display:"flex",flexDirection:"column",gap:12}}>{txns.map(t=><div key={t.id}>{txnCard(t)}</div>)}</div>}
+      </div>
+    );
+  };
+
+  const renderPartyList=(type)=>{
+    const list=type==="w"?W:R;const icon=type==="w"?"🏭":"🏪";const label=type==="w"?"Wholesalers":"Retailers";
+    const filtered=list.filter(p=>!q||p.name.toLowerCase().includes(q.toLowerCase())||p.location?.toLowerCase().includes(q.toLowerCase()));
+    if(detail?.type===type)return renderPartyDetail();
+    return(
+      <div>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}><div style={{fontSize:22,fontWeight:900,color:$.text}}>{icon} {label}</div>{type==="r"&&btn("📥 Bulk",()=>{setBulkText("");setBulkPreview([]);setForm("bulk");},$.purple,"#fff",false,true)}</div>
+        <input value={q} onChange={e=>setQ(e.target.value)} placeholder={"Search "+label.toLowerCase()+"..."} style={{...IS,marginBottom:14}}/>
+        {filtered.length===0?cd(<div style={{textAlign:"center",padding:40}}><div style={{fontSize:48,marginBottom:8}}>{icon}</div><div style={{fontWeight:700,color:$.muted}}>No {label.toLowerCase()}</div>{btn("+ Add",()=>openNewParty(type),$.primary,"#fff",false,false,{marginTop:16})}</div>):
+          <div style={{display:"flex",flexDirection:"column",gap:10}}>{filtered.map(p=>{const txns=yT.filter(t=>type==="w"?t.wholesalerId===p.id:t.retailerId===p.id);const cm=txns.reduce((s,t)=>s+Number(type==="w"?(t.wholesalerCommission||t.wc||0):(t.retailerCommission||t.rc||0)),0);return <div key={p.id}>{cd(<div style={{display:"flex",alignItems:"center",gap:12}}>{av(icon,type==="w"?$.primaryLight:$.purpleLight)}<div style={{flex:1,minWidth:0}}><div style={{fontWeight:700,fontSize:15,color:$.text}}>{p.name}</div><div style={{fontSize:12,color:$.muted,marginTop:2}}>{p.location||"—"}</div></div><div style={{textAlign:"right",flexShrink:0}}><div style={{fontWeight:800,fontSize:14,color:$.text}}>{txns.length} txns</div><div style={{fontSize:12,fontWeight:700,color:$.success}}>{INR(cm)}</div></div></div>,()=>setDetail({id:p.id,type}))}</div>;})}</div>}
+      </div>
+    );
+  };
+
+  const renderReports=()=>{
+    const wTop=W.map(w=>{const t=yT.filter(x=>x.wholesalerId===w.id);return{...w,n:t.length,b:t.reduce((s,x)=>s+Number(x.quantity||x.qty||0),0),cc:t.reduce((s,x)=>s+Number(x.wholesalerCommission||x.wc||0),0)};}).filter(w=>w.n>0).sort((a,b)=>b.b-a.b);
+    const rTop=R.map(r=>{const t=yT.filter(x=>x.retailerId===r.id);return{...r,n:t.length,b:t.reduce((s,x)=>s+Number(x.quantity||x.qty||0),0),cc:t.reduce((s,x)=>s+Number(x.retailerCommission||x.rc||0),0)};}).filter(r=>r.n>0).sort((a,b)=>b.b-a.b);
+    const sf=(list)=>list.filter(p=>!q||p.name.toLowerCase().includes(q.toLowerCase())||p.location?.toLowerCase().includes(q.toLowerCase()));
+    return(
+      <div>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}><div style={{fontSize:22,fontWeight:900,color:$.text}}>Reports</div><select value={yr} onChange={e=>setYr(e.target.value)} style={{border:"1.5px solid "+$.border,borderRadius:12,padding:"8px 12px",fontSize:14,fontWeight:600,background:$.card,color:$.text}}>{years.map(y=><option key={y}>{y}</option>)}</select></div>
+        <div style={{display:"flex",gap:8,marginBottom:20}}>{met("💼","Business",biz+" T",$.primary)}{met("💰","Commission",INR(comm),$.success)}{met("✅","Collected",yT.filter(t=>t.status==="collected").length+"/"+yT.length,$.purple)}</div>
+        {cd(<div><div style={{fontWeight:800,fontSize:15,color:$.text,marginBottom:10}}>Monthly</div>{mData.filter(d=>d.n>0).map((d,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"10px 0",borderBottom:"1px solid "+$.border}}><span style={{fontWeight:600,color:$.text}}>{d.m}</span><div style={{display:"flex",gap:16,fontSize:14}}><span style={{color:$.text}}>{d.biz} T</span><span style={{color:$.muted}}>{d.n} txns</span></div></div>)}{mData.filter(d=>d.n>0).length===0&&<div style={{textAlign:"center",padding:20,color:$.muted}}>No data</div>}</div>,null,{marginBottom:16})}
+        {cd(<div><div style={{fontWeight:800,fontSize:15,color:$.text,marginBottom:4}}>📄 Statements</div><div style={{fontSize:12,color:$.muted,marginBottom:12}}>Download per party</div><input value={q} onChange={e=>setQ(e.target.value)} placeholder="🔍 Search..." style={{...IS,marginBottom:14,fontSize:14}}/>
+          <div style={{fontWeight:700,fontSize:13,color:$.primary,marginBottom:8}}>Wholesalers</div>
+          {sf(W).length===0?<div style={{fontSize:13,color:$.muted,marginBottom:12}}>None</div>:<div style={{display:"flex",flexDirection:"column",gap:6,marginBottom:16}}>{sf(W).map(w=>{const n=yT.filter(t=>t.wholesalerId===w.id).length;return <div key={w.id} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 12px",background:$.bg,borderRadius:12}}><div><span style={{fontWeight:700,fontSize:14,color:$.text}}>{w.name}</span>{w.location&&<span style={{fontSize:12,color:$.muted,marginLeft:6}}>📍{w.location}</span>}<span style={{fontSize:12,color:$.muted,marginLeft:8}}>{n}</span></div><button onClick={()=>genReport(w,"w")} disabled={n===0} style={{background:n>0?$.primary:$.border,color:n>0?"#fff":$.muted,border:"none",borderRadius:10,padding:"8px 14px",fontSize:12,fontWeight:700,cursor:n>0?"pointer":"default",fontFamily:"inherit"}}>📄</button></div>;})}</div>}
+          <div style={{fontWeight:700,fontSize:13,color:$.purple,marginBottom:8}}>Retailers</div>
+          {sf(R).length===0?<div style={{fontSize:13,color:$.muted}}>None</div>:<div style={{display:"flex",flexDirection:"column",gap:6}}>{sf(R).map(r=>{const n=yT.filter(t=>t.retailerId===r.id).length;return <div key={r.id} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 12px",background:$.bg,borderRadius:12}}><div><span style={{fontWeight:700,fontSize:14,color:$.text}}>{r.name}</span>{r.location&&<span style={{fontSize:12,color:$.muted,marginLeft:6}}>📍{r.location}</span>}<span style={{fontSize:12,color:$.muted,marginLeft:8}}>{n}</span></div><button onClick={()=>genReport(r,"r")} disabled={n===0} style={{background:n>0?$.purple:$.border,color:n>0?"#fff":$.muted,border:"none",borderRadius:10,padding:"8px 14px",fontSize:12,fontWeight:700,cursor:n>0?"pointer":"default",fontFamily:"inherit"}}>📄</button></div>;})}</div>}
+        </div>,null,{marginBottom:16,border:"2px solid "+$.primaryLight})}
+        {[["🏭 Top Wholesalers",wTop.slice(0,5)],["🏪 Top Retailers",rTop.slice(0,5)]].map(([title,data])=><div key={title}>{cd(<div><div style={{fontWeight:800,fontSize:15,color:$.text,marginBottom:10}}>{title}</div>{data.length===0?<div style={{textAlign:"center",padding:16,color:$.muted}}>No data</div>:data.map((p,i)=><div key={p.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:"1px solid "+$.border}}><div style={{display:"flex",alignItems:"center",gap:8}}><span style={{color:$.muted,fontSize:13,width:20}}>#{i+1}</span><span style={{fontWeight:600,color:$.text}}>{p.name}</span></div><div style={{textAlign:"right"}}><div style={{fontWeight:700,fontSize:14,color:$.text}}>{p.b} T</div><div style={{fontSize:11,color:$.success,fontWeight:600}}>{INR(p.cc)}</div></div></div>)}</div>,null,{marginBottom:16})}</div>)}
+      </div>
+    );
+  };
+
+  const renderProfile=()=>(
+    <div>
+      <div style={{fontSize:22,fontWeight:900,color:$.text,marginBottom:20}}>👤 Profile</div>
+      {cd(<div><div style={{display:"flex",alignItems:"center",gap:14}}><div style={{width:60,height:60,borderRadius:99,background:$.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,fontWeight:900,color:$.primary}}>{currentUser?.name?.[0]}</div><div style={{flex:1}}><div style={{fontSize:20,fontWeight:900,color:$.text}}>{currentUser?.name}</div><div style={{fontSize:13,color:$.muted}}>@{currentUser?.username}</div></div><span style={{fontSize:20,color:$.muted}}>✏️</span></div><div style={{fontSize:12,color:$.primary,fontWeight:600,marginTop:10,textAlign:"center"}}>Tap to edit</div></div>,()=>{setProfName(currentUser?.name||"");setOldPw("");setNewPw("");setConfirmPw("");setEditProfile(true);},{marginBottom:16})}
+      {cd(<div><div style={{fontWeight:800,color:$.text,marginBottom:16}}>Business Info</div>{inp("Business Name",{value:cfg.biz,onChange:e=>setCfg({...cfg,biz:e.target.value})})}{inp("Owner Name",{value:cfg.owner,onChange:e=>setCfg({...cfg,owner:e.target.value})})}<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{inp("W Comm (₹/T)",{type:"number",value:cfg.wRate,onChange:e=>setCfg({...cfg,wRate:e.target.value})})}{inp("R Comm (₹/T)",{type:"number",value:cfg.rRate,onChange:e=>setCfg({...cfg,rRate:e.target.value})})}</div></div>,null,{marginBottom:16})}
+      {cd(<div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}><div><div style={{fontWeight:800,color:$.text}}>🌙 Dark Mode</div><div style={{fontSize:12,color:$.muted,marginTop:2}}>Easier on eyes</div></div><button onClick={()=>setDark(!dark)} style={{width:56,height:30,borderRadius:15,border:"none",background:dark?$.primary:$.border,cursor:"pointer",position:"relative",transition:"background .2s"}}><div style={{width:24,height:24,borderRadius:12,background:"#fff",position:"absolute",top:3,left:dark?29:3,transition:"left .2s",boxShadow:"0 1px 4px rgba(0,0,0,0.2)"}}/></button></div>,null,{marginBottom:16})}
+      {cd(<div><div style={{fontWeight:800,color:$.text,marginBottom:8}}>Google Sheets</div>{sheet.ok()?<div style={{display:"flex",alignItems:"center",gap:8,background:$.successLight,padding:12,borderRadius:12}}><span>✅</span><span style={{fontWeight:600,color:$.success,fontSize:14}}>Connected</span></div>:<div style={{fontSize:13,color:$.muted}}>Not configured</div>}</div>,null,{marginBottom:16})}
+      {cd(<div><div style={{fontWeight:800,color:$.danger,marginBottom:10}}>Danger Zone</div><div style={{display:"flex",gap:10,flexWrap:"wrap"}}>{btn("Reset",()=>{if(confirm("Delete ALL?")){setW([]);setR([]);setT([]);setTab("home");flash("Cleared");}},$.danger,"#fff",false,true)}{btn("Logout",()=>{setLoggedIn(false);setLoginUser("");setLoginPass("");},$.bg,$.danger,false,true)}</div></div>,null,{border:"1.5px solid "+$.dangerLight})}
+    </div>
+  );
+
+  const tabList=[{id:"home",icon:"🏠",label:"Home"},{id:"txns",icon:"💰",label:"Txns"},{id:"wholesale",icon:"🏭",label:"Wholesale"},{id:"retail",icon:"🏪",label:"Retail"},{id:"reports",icon:"📈",label:"Reports"},{id:"profile",icon:"👤",label:"Profile"}];
+
+  return(
+    <div style={{minHeight:"100vh",background:$.bg,transition:"background .3s"}}>
+      {toast&&<div style={{position:"fixed",top:16,left:"50%",transform:"translateX(-50%)",zIndex:200,background:$.success,color:"#fff",padding:"10px 24px",borderRadius:14,fontWeight:700,fontSize:14,boxShadow:"0 8px 24px rgba(0,0,0,0.2)"}}>{toast}</div>}
+      {loading&&<div style={{position:"fixed",inset:0,zIndex:300,background:$.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}><div style={{fontSize:56,marginBottom:16}}>🌾</div><div style={{fontWeight:800,fontSize:18,color:$.text}}>Loading...</div></div>}
+      <div style={{padding:"16px 16px 100px",maxWidth:540,margin:"0 auto"}}>
+        {tab==="home"&&renderHome()}
+        {tab==="txns"&&renderTxns()}
+        {tab==="wholesale"&&renderPartyList("w")}
+        {tab==="retail"&&renderPartyList("r")}
+        {tab==="reports"&&renderReports()}
+        {tab==="profile"&&renderProfile()}
+      </div>
+      {["home","txns","wholesale","retail"].includes(tab)&&<button onClick={tab==="wholesale"?()=>openNewParty("w"):tab==="retail"?()=>openNewParty("r"):openNewTxn} style={{position:"fixed",bottom:84,right:20,zIndex:50,width:58,height:58,borderRadius:99,border:"none",background:"linear-gradient(135deg,"+$.primary+","+$.primaryDark+")",color:"#fff",fontSize:28,cursor:"pointer",boxShadow:"0 6px 20px "+$.primary+"60",display:"flex",alignItems:"center",justifyContent:"center"}}>+</button>}
+      <div style={{position:"fixed",bottom:0,left:0,right:0,background:$.card,borderTop:"1px solid "+$.border,zIndex:90,paddingBottom:"env(safe-area-inset-bottom)"}}><div style={{display:"flex",maxWidth:540,margin:"0 auto"}}>{tabList.map(t=><button key={t.id} onClick={()=>{setTab(t.id);setDetail(null);setQ("");}} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",padding:"8px 0 6px",border:"none",background:"none",cursor:"pointer",color:tab===t.id?$.primary:$.muted}}><span style={{fontSize:20,lineHeight:1}}>{t.icon}</span><span style={{fontSize:10,fontWeight:700,marginTop:3}}>{t.label}</span>{tab===t.id&&<div style={{width:20,height:3,borderRadius:2,background:$.primary,marginTop:2}}/>}</button>)}</div></div>
+
+      <ModalShell open={form==="party"} title={edit?.id?"Edit":"Add "+(edit?._t==="w"?"Wholesaler":"Retailer")} onClose={closeForm} bgC={$.card} borderC={$.border} textC={$.text} mutedC={$.muted} bg={$.bg}>
+        {edit&&<div>{inp("Name *",{value:edit.name,onChange:e=>setEdit({...edit,name:e.target.value}),placeholder:"Name"})}{inp("Phone",{value:edit.phone,onChange:e=>setEdit({...edit,phone:e.target.value}),placeholder:"Phone",type:"tel"})}{inp("Location",{value:edit.location,onChange:e=>setEdit({...edit,location:e.target.value}),placeholder:"City"})}{inp("GST",{value:edit.gst,onChange:e=>setEdit({...edit,gst:e.target.value}),placeholder:"GST"})}{inp("Notes",{value:edit.notes,onChange:e=>setEdit({...edit,notes:e.target.value}),placeholder:"Notes"})}<div style={{display:"flex",gap:12,marginTop:8}}>{btn("Cancel",closeForm,$.bg,$.muted,true)}{btn(edit.id?"Update":"Add",saveParty,$.primary,"#fff",true)}</div></div>}
+      </ModalShell>
+
+      <ModalShell open={form==="txn"} title={edit?.id?"Edit Transaction":"New Transaction"} onClose={closeForm} bgC={$.card} borderC={$.border} textC={$.text} mutedC={$.muted} bg={$.bg}>
+        {edit&&<div>{inp("Date *",{type:"date",value:edit.date,onChange:e=>setEdit({...edit,date:e.target.value})})}{sel("Wholesaler *",W.map(w=>({v:w.id,l:w.name})),{value:edit.wid,onChange:e=>setEdit({...edit,wid:e.target.value})})}{sel("Retailer *",R.map(r=>({v:r.id,l:r.name})),{value:edit.rid,onChange:e=>setEdit({...edit,rid:e.target.value})})}{inp("Product *",{value:edit.product,onChange:e=>setEdit({...edit,product:e.target.value}),placeholder:"DAP, Urea..."})}<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{inp("Qty (T)",{type:"number",value:edit.qty,onChange:e=>setEdit(calc({...edit,qty:e.target.value}))})}{inp("Rate (₹/T)",{type:"number",value:edit.rate,onChange:e=>setEdit(calc({...edit,rate:e.target.value}))})}</div><div style={{background:$.primaryLight,borderRadius:14,padding:14,textAlign:"center",marginBottom:16}}><div style={{fontSize:12,color:$.primary,fontWeight:600}}>Amount</div><div style={{fontSize:24,fontWeight:900,color:$.primary}}>{INR(edit.amt)}</div></div><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{inp("W Comm ₹",{type:"number",value:edit.wc,onChange:e=>setEdit({...edit,wc:e.target.value})})}{inp("R Comm ₹",{type:"number",value:edit.rc,onChange:e=>setEdit({...edit,rc:e.target.value})})}</div><div style={{background:$.successLight,borderRadius:14,padding:14,textAlign:"center",marginBottom:16}}><div style={{fontSize:12,color:$.success,fontWeight:600}}>Total Commission</div><div style={{fontSize:24,fontWeight:900,color:$.success}}>{INR(Number(edit.wc||0)+Number(edit.rc||0))}</div></div>{sel("Status",[{v:"pending",l:"💳 Credit"},{v:"collected",l:"✅ Collected"},{v:"cancelled",l:"❌ Cancelled"}],{value:edit.status,onChange:e=>setEdit({...edit,status:e.target.value})})}{inp("Notes",{value:edit.notes,onChange:e=>setEdit({...edit,notes:e.target.value}),placeholder:"Notes"})}<div style={{display:"flex",gap:12,marginTop:8}}>{btn("Cancel",closeForm,$.bg,$.muted,true)}{btn(edit.id?"Update":"Save",saveTxn,$.success,"#fff",true)}</div></div>}
+      </ModalShell>
+
+      <ModalShell open={form==="bulk"} title="📥 Bulk Add Retailers" onClose={()=>{setForm(null);setBulkText("");setBulkPreview([]);}} bgC={$.card} borderC={$.border} textC={$.text} mutedC={$.muted} bg={$.bg}>
+        <div style={{fontSize:13,color:$.muted,marginBottom:12}}>Upload CSV or paste: <strong>Name, Location</strong> per line.</div>
+        <input ref={fileRef} type="file" accept=".csv,.txt" onChange={handleFile} style={{display:"none"}}/>
+        {btn("📁 Upload File",()=>fileRef.current?.click(),$.bg,$.text,true,false,{marginBottom:12,border:"2px dashed "+$.border})}
+        <div style={{marginBottom:16}}><label style={{display:"block",fontSize:13,fontWeight:600,color:$.muted,marginBottom:6}}>Or paste</label><textarea value={bulkText} onChange={e=>{setBulkText(e.target.value);setBulkPreview(parseBulk(e.target.value));}} placeholder={"Ravi, Hyd\nKumar, Guntur"} style={{...IS,height:100,resize:"vertical"}}/></div>
+        {bulkPreview.length>0&&<div style={{marginBottom:16}}><div style={{fontWeight:700,fontSize:14,color:$.text,marginBottom:8}}>Preview ({bulkPreview.filter(p=>!p.exists).length} new)</div><div style={{maxHeight:180,overflowY:"auto",borderRadius:12,border:"1px solid "+$.border}}>{bulkPreview.map((p,i)=><div key={i} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"8px 12px",borderBottom:"1px solid "+$.border,background:p.exists?$.dangerLight:$.card}}><div><span style={{fontWeight:600,fontSize:13,color:$.text}}>{p.name}</span>{p.location&&<span style={{fontSize:12,color:$.muted,marginLeft:6}}>📍{p.location}</span>}</div>{p.exists?<span style={{fontSize:11,color:$.danger,fontWeight:700}}>EXISTS</span>:<span style={{fontSize:11,color:$.success,fontWeight:700}}>NEW</span>}</div>)}</div></div>}
+        <div style={{display:"flex",gap:12}}>{btn("Cancel",()=>{setForm(null);setBulkText("");setBulkPreview([]);},$.bg,$.muted,true)}{btn(bulkImporting?"...":"Import "+bulkPreview.filter(p=>!p.exists).length,doBulkImport,$.success,"#fff",true)}</div>
+      </ModalShell>
+
+      <ModalShell open={editProfile} title="Edit Profile" onClose={()=>setEditProfile(false)} bgC={$.card} borderC={$.border} textC={$.text} mutedC={$.muted} bg={$.bg}>
+        {inp("Display Name",{value:profName,onChange:e=>setProfName(e.target.value),placeholder:"Name"})}
+        <div style={{height:1,background:$.border,margin:"8px 0 16px"}}/>
+        <div style={{fontWeight:700,fontSize:14,color:$.text,marginBottom:12}}>Change Password (optional)</div>
+        {inp("Current",{type:"password",value:oldPw,onChange:e=>setOldPw(e.target.value)})}
+        {inp("New",{type:"password",value:newPw,onChange:e=>setNewPw(e.target.value)})}
+        {inp("Confirm",{type:"password",value:confirmPw,onChange:e=>setConfirmPw(e.target.value)})}
+        <div style={{display:"flex",gap:12,marginTop:8}}>{btn("Cancel",()=>setEditProfile(false),$.bg,$.muted,true)}{btn("Save",saveProfile,$.primary,"#fff",true)}</div>
+      </ModalShell>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
+
