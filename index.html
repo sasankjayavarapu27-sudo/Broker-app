@@ -93,16 +93,14 @@ function App(){
   const $=dark?DT:LT;
   const IS={width:"100%",border:"1.5px solid "+$.border,borderRadius:12,padding:"14px 16px",fontSize:16,outline:"none",boxSizing:"border-box",fontFamily:"inherit",background:$.card,color:$.text,WebkitAppearance:"none"};
 
-  useEffect(()=>{if(!loggedIn||!sheet.ok())return;(async()=>{setLoading(true);const[w,r,t,s]=await Promise.all([sheet.get("Wholesalers"),sheet.get("Retailers"),sheet.get("Transactions"),sheet.get("Settings")]);setW(w);setR(r);setT(t);if(s&&s.length>0){const c={};s.forEach(row=>{if(row.key)c[row.key]=row.value;});setCfg(prev=>({...prev,...c}));}setLoading(false);})();},[loggedIn]);
+  useEffect(()=>{if(!loggedIn||!sheet.ok())return;(async()=>{setLoading(true);const[w,r,t,s]=await Promise.all([sheet.get("Wholesalers"),sheet.get("Retailers"),sheet.get("Transactions"),sheet.get("Settings")]);setW(w);setR(r);setT(t);if(s&&s.length>0){const row=s[0];setCfg({biz:row.biz||"Fertilizer Brokerage",owner:row.owner||"",wRate:row.wRate||50,rRate:row.rRate||50});if(row.users){try{const saved=JSON.parse(row.users);if(Array.isArray(saved)&&saved.length>0){USERS=saved;const updated=saved.find(u=>u.username.toLowerCase()===currentUser?.username?.toLowerCase());if(updated)setCurrentUser(updated);}}catch{}}}setLoading(false);})();},[loggedIn]);
 
   const updateCfg=(newCfg)=>{
     setCfg(newCfg);
     if(cfgSaveTimeout.current)clearTimeout(cfgSaveTimeout.current);
     cfgSaveTimeout.current=setTimeout(async()=>{
       if(!sheet.ok())return;
-      for(const key of ["biz","owner","wRate","rRate"]){
-        await sheet.put("Settings",key,{value:newCfg[key]||""});
-      }
+      await sheet.put("Settings","settings",{biz:newCfg.biz||"",owner:newCfg.owner||"",wRate:newCfg.wRate||0,rRate:newCfg.rRate||0});
     },1500);
   };
   const flash=(m)=>{setToast(m);setTimeout(()=>setToast(""),2500);};
@@ -114,8 +112,24 @@ function App(){
   const pend=yT.filter(t=>t.status==="pending");
   const years=[...new Set(T.map(t=>t.date?.slice(0,4)).concat([String(new Date().getFullYear())]))].filter(Boolean).sort().reverse();
   const calc=(e)=>{const a=Number(e.qty||0)*Number(e.rate||0);const t=Number(e.qty||0);return{...e,amt:a,wc:Math.round(t*Number(cfg.wRate||0)),rc:Math.round(t*Number(cfg.rRate||0))};};
+  const[usersLoaded,setUsersLoaded]=useState(false);
+  useEffect(()=>{if(usersLoaded)return;(async()=>{if(!sheet.ok())return;try{const s=await sheet.get("Settings");if(s&&s.length>0&&s[0].users){const saved=JSON.parse(s[0].users);if(Array.isArray(saved)&&saved.length>0)USERS=saved;}}catch{}setUsersLoaded(true);})();},[]);
   const doLogin=()=>{const u=USERS.find(u=>u.username.toLowerCase()===loginUser.toLowerCase()&&u.password===loginPass);if(u){setCurrentUser(u);setLoggedIn(true);setLoginErr("");setProfName(u.name);}else setLoginErr("Invalid credentials");};
-  const saveProfile=()=>{if(profName.trim()){const i=USERS.findIndex(u=>u.username===currentUser.username);if(i>=0)USERS[i].name=profName.trim();setCurrentUser({...currentUser,name:profName.trim()});}if(oldPw&&newPw&&confirmPw){if(oldPw!==currentUser.password){flash("Wrong password");return;}if(newPw!==confirmPw){flash("Mismatch");return;}const i=USERS.findIndex(u=>u.username===currentUser.username);if(i>=0)USERS[i].password=newPw;setCurrentUser({...currentUser,password:newPw});setOldPw("");setNewPw("");setConfirmPw("");flash("Password updated!");}else flash("Saved!");setEditProfile(false);};
+  const saveProfile=()=>{
+    let changed=false;
+    if(profName.trim()){const i=USERS.findIndex(u=>u.username===currentUser.username);if(i>=0){USERS[i].name=profName.trim();changed=true;}setCurrentUser({...currentUser,name:profName.trim()});}
+    if(oldPw&&newPw&&confirmPw){
+      if(oldPw!==currentUser.password){flash("Wrong password");return;}
+      if(newPw!==confirmPw){flash("Mismatch");return;}
+      const i=USERS.findIndex(u=>u.username===currentUser.username);
+      if(i>=0){USERS[i].password=newPw;changed=true;}
+      setCurrentUser({...currentUser,password:newPw});
+      setOldPw("");setNewPw("");setConfirmPw("");
+      flash("Password updated!");
+    }else flash("Saved!");
+    if(changed&&sheet.ok()){sheet.put("Settings","settings",{users:JSON.stringify(USERS)});}
+    setEditProfile(false);
+  };
   const saveParty=async()=>{if(!edit?.name?.trim())return;const isW=edit._t==="w";const sh=isW?"Wholesalers":"Retailers";const[list,set]=isW?[W,setW]:[R,setR];const row={id:edit.id||ID(),name:edit.name,phone:edit.phone||"",location:edit.location||"",gst:edit.gst||"",notes:edit.notes||""};if(edit.id){set(list.map(p=>p.id===edit.id?row:p));await sheet.put(sh,edit.id,row);}else{set([...list,row]);await sheet.add(sh,row);}setForm(null);setEdit(null);flash(edit.id?"Updated":"Added");};
   const delParty=async(type,id)=>{if(!confirm("Delete?"))return;const[sh,list,set]=type==="w"?["Wholesalers",W,setW]:["Retailers",R,setR];set(list.filter(p=>p.id!==id));await sheet.del(sh,id);if(detail?.id===id)setDetail(null);flash("Removed");};
   const saveTxn=async()=>{if(!edit?.wid||!edit?.rid||!edit?.product)return;const row={id:edit.id||ID(),date:edit.date,wholesalerId:edit.wid,retailerId:edit.rid,product:edit.product,quantity:edit.qty,unit:"Tons",rate:edit.rate,amount:edit.amt,wholesalerCommission:edit.wc,retailerCommission:edit.rc,status:edit.status,notes:edit.notes||""};if(edit.id){setT(T.map(t=>t.id===edit.id?row:t));await sheet.put("Transactions",edit.id,row);}else{setT([...T,row]);await sheet.add("Transactions",row);}setForm(null);setEdit(null);flash(edit.id?"Updated":"Saved");};
