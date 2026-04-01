@@ -69,6 +69,7 @@ function App(){
   const[R,setR]=useState([]);
   const[T,setT]=useState([]);
   const[cfg,setCfg]=useState({biz:"Fertilizer Brokerage",owner:"",wRate:50,rRate:50});
+  const cfgSaveTimeout=useRef(null);
   const[tab,setTab]=useState("home");
   const[form,setForm]=useState(null);
   const[edit,setEdit]=useState(null);
@@ -92,8 +93,18 @@ function App(){
   const $=dark?DT:LT;
   const IS={width:"100%",border:"1.5px solid "+$.border,borderRadius:12,padding:"14px 16px",fontSize:16,outline:"none",boxSizing:"border-box",fontFamily:"inherit",background:$.card,color:$.text,WebkitAppearance:"none"};
 
-  useEffect(()=>{if(!loggedIn||!sheet.ok())return;(async()=>{setLoading(true);const[w,r,t]=await Promise.all([sheet.get("Wholesalers"),sheet.get("Retailers"),sheet.get("Transactions")]);setW(w);setR(r);setT(t);setLoading(false);})();},[loggedIn]);
+  useEffect(()=>{if(!loggedIn||!sheet.ok())return;(async()=>{setLoading(true);const[w,r,t,s]=await Promise.all([sheet.get("Wholesalers"),sheet.get("Retailers"),sheet.get("Transactions"),sheet.get("Settings")]);setW(w);setR(r);setT(t);if(s&&s.length>0){const c={};s.forEach(row=>{if(row.key)c[row.key]=row.value;});setCfg(prev=>({...prev,...c}));}setLoading(false);})();},[loggedIn]);
 
+  const updateCfg=(newCfg)=>{
+    setCfg(newCfg);
+    if(cfgSaveTimeout.current)clearTimeout(cfgSaveTimeout.current);
+    cfgSaveTimeout.current=setTimeout(async()=>{
+      if(!sheet.ok())return;
+      for(const key of ["biz","owner","wRate","rRate"]){
+        await sheet.put("Settings",key,{value:newCfg[key]||""});
+      }
+    },1500);
+  };
   const flash=(m)=>{setToast(m);setTimeout(()=>setToast(""),2500);};
   const nm=(type,id)=>(type==="w"?W:R).find(p=>p.id===id)?.name||"—";
   const gp=(type,id)=>(type==="w"?W:R).find(p=>p.id===id);
@@ -234,9 +245,8 @@ function App(){
     <div>
       <div style={{fontSize:22,fontWeight:900,color:$.text,marginBottom:20}}>👤 Profile</div>
       {cd(<div><div style={{display:"flex",alignItems:"center",gap:14}}><div style={{width:60,height:60,borderRadius:99,background:$.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,fontWeight:900,color:$.primary}}>{currentUser?.name?.[0]}</div><div style={{flex:1}}><div style={{fontSize:20,fontWeight:900,color:$.text}}>{currentUser?.name}</div><div style={{fontSize:13,color:$.muted}}>@{currentUser?.username}</div></div><span style={{fontSize:20,color:$.muted}}>✏️</span></div><div style={{fontSize:12,color:$.primary,fontWeight:600,marginTop:10,textAlign:"center"}}>Tap to edit</div></div>,()=>{setProfName(currentUser?.name||"");setOldPw("");setNewPw("");setConfirmPw("");setEditProfile(true);},{marginBottom:16})}
-      {cd(<div><div style={{fontWeight:800,color:$.text,marginBottom:16}}>Business Info</div>{inp("Business Name",{value:cfg.biz,onChange:e=>setCfg({...cfg,biz:e.target.value})})}{inp("Owner Name",{value:cfg.owner,onChange:e=>setCfg({...cfg,owner:e.target.value})})}<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{inp("W Comm (₹/T)",{type:"number",value:cfg.wRate,onChange:e=>setCfg({...cfg,wRate:e.target.value})})}{inp("R Comm (₹/T)",{type:"number",value:cfg.rRate,onChange:e=>setCfg({...cfg,rRate:e.target.value})})}</div></div>,null,{marginBottom:16})}
+      {cd(<div><div style={{fontWeight:800,color:$.text,marginBottom:16}}>Business Info</div>{inp("Business Name",{value:cfg.biz,onChange:e=>updateCfg({...cfg,biz:e.target.value})})}{inp("Owner Name",{value:cfg.owner,onChange:e=>updateCfg({...cfg,owner:e.target.value})})}<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{inp("W Comm (₹/T)",{type:"number",value:cfg.wRate,onChange:e=>updateCfg({...cfg,wRate:e.target.value})})}{inp("R Comm (₹/T)",{type:"number",value:cfg.rRate,onChange:e=>updateCfg({...cfg,rRate:e.target.value})})}</div></div>,null,{marginBottom:16})}
       {cd(<div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}><div><div style={{fontWeight:800,color:$.text}}>🌙 Dark Mode</div><div style={{fontSize:12,color:$.muted,marginTop:2}}>Easier on eyes</div></div><button onClick={()=>setDark(!dark)} style={{width:56,height:30,borderRadius:15,border:"none",background:dark?$.primary:$.border,cursor:"pointer",position:"relative",transition:"background .2s"}}><div style={{width:24,height:24,borderRadius:12,background:"#fff",position:"absolute",top:3,left:dark?29:3,transition:"left .2s",boxShadow:"0 1px 4px rgba(0,0,0,0.2)"}}/></button></div>,null,{marginBottom:16})}
-      {cd(<div><div style={{fontWeight:800,color:$.text,marginBottom:8}}>Google Sheets</div>{sheet.ok()?<div style={{display:"flex",alignItems:"center",gap:8,background:$.successLight,padding:12,borderRadius:12}}><span>✅</span><span style={{fontWeight:600,color:$.success,fontSize:14}}>Connected</span></div>:<div style={{fontSize:13,color:$.muted}}>Not configured</div>}</div>,null,{marginBottom:16})}
       {cd(<div><div style={{fontWeight:800,color:$.danger,marginBottom:10}}>Danger Zone</div><div style={{display:"flex",gap:10,flexWrap:"wrap"}}>{btn("Reset",()=>{if(confirm("Delete ALL?")){setW([]);setR([]);setT([]);setTab("home");flash("Cleared");}},$.danger,"#fff",false,true)}{btn("Logout",()=>{setLoggedIn(false);setLoginUser("");setLoginPass("");},$.bg,$.danger,false,true)}</div></div>,null,{border:"1.5px solid "+$.dangerLight})}
     </div>
   );
