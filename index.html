@@ -12,12 +12,12 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f1f5f9;overscroll-behavior:none;-webkit-font-smoothing:antialiased}
-.card-hover{transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+.card-hover{transition:transform .22s ease,box-shadow .22s ease}
 .card-hover:hover{transform:translateY(-3px) scale(1.003);box-shadow:0 12px 28px rgba(0,0,0,0.08),0 2px 8px rgba(0,0,0,0.04)}
 .card-hover:active{transform:translateY(0) scale(0.995);box-shadow:0 2px 6px rgba(0,0,0,0.06)}
 .btn-primary{transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,99,235,0.3);filter:brightness(1.08)}
-.btn-primary:active{transform:translateY(0) scale(0.97);box-shadow:0 2px 8px rgba(37,99,235,0.2)}
+.btn-primary:active{transform:translateY(0) scale(0.97)}
 .btn-success-h{transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
 .btn-success-h:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(5,150,105,0.25);filter:brightness(1.08)}
 .btn-success-h:active{transform:translateY(0) scale(0.97)}
@@ -37,8 +37,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .fab-hover:hover{transform:scale(1.08) rotate(90deg);box-shadow:0 10px 30px rgba(37,99,235,0.4)}
 .fab-hover:active{transform:scale(0.95) rotate(90deg)}
 .nav-btn{transition:transform .2s ease,color .2s ease;position:relative}
-.nav-btn::after{content:'';position:absolute;top:4px;left:50%;transform:translateX(-50%) scale(0);width:42px;height:42px;border-radius:13px;background:rgba(37,99,235,0.06);transition:transform .25s cubic-bezier(.4,0,.2,1),opacity .2s;opacity:0}
-.nav-btn:hover::after{transform:translateX(-50%) scale(1);opacity:1}
 .nav-btn:hover{transform:translateY(-2px)}
 .nav-btn:active{transform:translateY(0) scale(0.92)}
 .sel-hover{transition:border-color .2s ease,box-shadow .2s ease}
@@ -48,14 +46,53 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .inp-glow:focus{border-color:#2563eb !important;box-shadow:0 0 0 3px rgba(37,99,235,0.1) !important}
 .met-hover{transition:transform .2s ease,box-shadow .2s ease}
 .met-hover:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.06)}
-.report-row{transition:background .15s ease,transform .15s ease}
-.report-row:hover{background:rgba(37,99,235,0.04) !important;transform:translateX(4px)}
-@keyframes spin{to{transform:rotate(360deg)}}
-.dark .card-hover:hover{box-shadow:0 12px 28px rgba(0,0,0,0.25),0 2px 8px rgba(0,0,0,0.15)}
+/* Metric cards - compact on mobile */
+.metrics-row{display:flex;gap:10px}
+@media(max-width:399px){.metrics-row{gap:6px}}
+.metrics-row .met-hover{padding:12px 8px}
+@media(min-width:400px){.metrics-row .met-hover{padding:14px 12px}}
+
+/* Responsive grid */
+.rg{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:600px){.rg-2{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:900px){.rg-3{grid-template-columns:repeat(3,1fr)}}
+
+/* Form 2-col on desktop */
+.form-grid{display:grid;grid-template-columns:1fr;gap:0}
+@media(min-width:600px){.form-grid{grid-template-columns:1fr 1fr;gap:0 20px}}
+
+/* Sidebar: desktop only */
+.desktop-sidebar{display:none}
+@media(min-width:769px){.desktop-sidebar{display:flex !important}}
+
+/* Mobile nav: mobile/tablet only */
+.mobile-nav{display:block}
+@media(min-width:769px){.mobile-nav{display:none !important}}
+.mobile-nav-inner{display:flex;justify-content:space-around;align-items:center;padding:4px 0 2px}
+.mobile-nav-inner button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:6px 0 4px;border:none;background:none;cursor:pointer;font-family:inherit;gap:2px;position:relative}
+.mobile-nav-inner button span.nav-icon{font-size:22;line-height:1}
+.mobile-nav-inner button span.nav-label{font-size:9px;font-weight:700;letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:56px}
+
+/* Main content margin */
+.main-content{margin-left:0;padding:14px 14px 90px}
+@media(min-width:400px){.main-content{padding:16px 16px 96px}}
+@media(min-width:769px){.main-content{margin-left:220px;padding:32px 40px 40px}}
+@media(min-width:1100px){.main-content{padding:32px 56px 40px}}
+
+/* Modal: bottom sheet on mobile, center on desktop */
+.modal-inner-mobile{position:fixed;left:0;right:0;bottom:0;border-radius:24px 24px 0 0;max-height:88vh}
+@media(min-width:600px){.modal-inner-mobile{position:fixed;left:50%;top:50%;bottom:auto;right:auto;transform:translate(-50%,-50%);border-radius:24px;max-height:85vh;width:95%;max-width:520px;box-shadow:0 24px 64px rgba(0,0,0,0.2)}}
+.modal-wide{max-width:520px}
+@media(min-width:600px){.modal-wide{max-width:720px !important}}
+
+/* FAB position */
+.fab-pos{bottom:76px;right:16px}
+@media(min-width:769px){.fab-pos{bottom:24px;right:24px}}
+
+/* Dark overrides */
+.dark .card-hover:hover{box-shadow:0 12px 28px rgba(0,0,0,0.25)}
 .dark .btn-ghost:hover{background:rgba(255,255,255,0.06)}
 .dark .btn-action:hover{background:rgba(255,255,255,0.08)}
-.dark .nav-btn::after{background:rgba(96,165,250,0.1)}
-.dark .report-row:hover{background:rgba(96,165,250,0.06) !important}
 .dark .inp-glow:focus{border-color:#60a5fa !important;box-shadow:0 0 0 3px rgba(96,165,250,0.15) !important}
 .dark .sel-hover:hover{border-color:rgba(96,165,250,0.3);box-shadow:0 2px 12px rgba(96,165,250,0.1)}
 </style>
@@ -66,11 +103,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
-const {useState,useRef,useEffect,useCallback}=React;
+const {useState,useRef,useEffect}=React;
 const ID=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const INR=(v)=>"₹"+Number(v||0).toLocaleString("en-IN");
 const GAS_URL="https://script.google.com/macros/s/AKfycbwJ4Mx2QMdrhYdTPYATG3ATkbJDVBhb_nWYHJyBaVBTs5zBLddSgQz5evR38k6UUd-b/exec";
-
 let USERS=[{username:"Raja",password:"9393723555",name:"Raja"},{username:"Sasank",password:"9440032636",name:"Sasank"}];
 
 const sheet={
@@ -91,12 +127,12 @@ const generatePDF=(partyName,partyType,partyCity,txns,year,getName,getParty,cfg)
   const w=window.open("","_blank");if(w){w.document.write(html);w.document.close();setTimeout(()=>w.print(),600);}
 };
 
-const ModalShell=({open,title,onClose,children,bg,borderC,textC,mutedC,bgC})=>{
+const ModalShell=({open,title,onClose,children,bg,borderC,textC,mutedC,bgC,wide})=>{
   if(!open)return null;
   return(
     <div style={{position:"fixed",top:0,left:0,right:0,bottom:0,zIndex:9999}}>
       <div onClick={onClose} style={{position:"fixed",top:0,left:0,right:0,bottom:0,background:"rgba(0,0,0,0.4)",zIndex:9999}}></div>
-      <div style={{position:"fixed",left:0,right:0,bottom:0,background:bgC||"#fff",borderRadius:"24px 24px 0 0",maxHeight:"88vh",display:"flex",flexDirection:"column",zIndex:10000}}>
+      <div className={"modal-inner-mobile"+(wide?" modal-wide":"")} style={{background:bgC||"#fff",display:"flex",flexDirection:"column",zIndex:10000}}>
         <div style={{padding:"16px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"1px solid "+(borderC||"#e2e8f0"),flexShrink:0}}>
           <span style={{fontWeight:800,fontSize:18,color:textC||"#0f172a"}}>{title}</span>
           <button type="button" onClick={onClose} style={{width:36,height:36,borderRadius:99,border:"none",background:bg||"#f1f5f9",fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",color:mutedC||"#64748b"}}>✕</button>
@@ -107,42 +143,32 @@ const ModalShell=({open,title,onClose,children,bg,borderC,textC,mutedC,bgC})=>{
   );
 };
 
-const SearchSelect=({label,options,value,onChange,placeholder,theme})=>{
+const SearchSelect=({label,options,value,onChange,theme})=>{
   const[open,setOpen]=useState(false);
   const[sq,setSq]=useState("");
   const ref=useRef(null);
   const inputRef=useRef(null);
   const selected=options.find(o=>o.v===value);
   const filtered=options.filter(o=>o.l.toLowerCase().includes(sq.toLowerCase())||(o.loc||"").toLowerCase().includes(sq.toLowerCase()));
-
-  useEffect(()=>{
-    const handler=(e)=>{if(ref.current&&!ref.current.contains(e.target)){setOpen(false);setSq("");}};
-    document.addEventListener("mousedown",handler);document.addEventListener("touchstart",handler);
-    return()=>{document.removeEventListener("mousedown",handler);document.removeEventListener("touchstart",handler);};
-  },[]);
-
+  useEffect(()=>{const h=(e)=>{if(ref.current&&!ref.current.contains(e.target)){setOpen(false);setSq("");}};document.addEventListener("mousedown",h);document.addEventListener("touchstart",h);return()=>{document.removeEventListener("mousedown",h);document.removeEventListener("touchstart",h);};},[]);
   useEffect(()=>{if(open&&inputRef.current)inputRef.current.focus();},[open]);
-
   const $=theme;
   return(
     <div style={{marginBottom:16}} ref={ref}>
       <label style={{display:"block",fontSize:13,fontWeight:600,color:$.muted,marginBottom:6}}>{label}</label>
       <div style={{position:"relative"}}>
         <div onClick={()=>{setOpen(!open);setSq("");}} style={{width:"100%",border:"1.5px solid "+(open?$.primary:$.border),borderRadius:open?"12px 12px 0 0":"12px",padding:"14px 16px",fontSize:16,boxSizing:"border-box",fontFamily:"inherit",background:$.dark?"#1a1f30":$.card,color:selected?$.text:$.muted,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between",transition:"border-color .2s,box-shadow .2s",boxShadow:open?"0 0 0 3px "+$.primary+"1a":"none"}}>
-          <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{selected?selected.l:(placeholder||"Choose...")}</span>
+          <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{selected?selected.l:"Choose..."}</span>
           <span style={{fontSize:12,color:$.muted,flexShrink:0,marginLeft:8,transform:open?"rotate(180deg)":"rotate(0)",transition:"transform .2s"}}>▼</span>
         </div>
         {open&&<div style={{position:"absolute",top:"100%",left:0,right:0,background:$.dark?"#1a1f30":$.card,border:"1.5px solid "+$.primary,borderTop:"none",borderRadius:"0 0 12px 12px",zIndex:100,boxShadow:"0 12px 32px rgba(0,0,0,0.15)",overflow:"hidden"}}>
           <div style={{padding:"8px 10px",borderBottom:"1px solid "+$.border}}>
-            <input ref={inputRef} value={sq} onChange={e=>setSq(e.target.value)} placeholder={"Search "+label.toLowerCase().replace(" *","")+"..."} style={{width:"100%",border:"1.5px solid "+$.border,borderRadius:10,padding:"10px 12px",fontSize:14,outline:"none",boxSizing:"border-box",fontFamily:"inherit",background:$.bg,color:$.text}} onClick={e=>e.stopPropagation()}/>
+            <input ref={inputRef} value={sq} onChange={e=>setSq(e.target.value)} placeholder="Search..." style={{width:"100%",border:"1.5px solid "+$.border,borderRadius:10,padding:"10px 12px",fontSize:14,outline:"none",boxSizing:"border-box",fontFamily:"inherit",background:$.bg,color:$.text}} onClick={e=>e.stopPropagation()}/>
           </div>
           <div style={{maxHeight:180,overflowY:"auto",overscrollBehavior:"contain"}}>
             {filtered.length===0?<div style={{padding:"14px 16px",fontSize:14,color:$.muted,textAlign:"center"}}>No matches</div>:
             filtered.map(o=><div key={o.v} onClick={(e)=>{e.stopPropagation();onChange(o.v);setOpen(false);setSq("");}} style={{padding:"12px 16px",fontSize:15,color:$.text,cursor:"pointer",background:o.v===value?($.primary+"18"):"transparent",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"1px solid "+$.border+"80"}} onMouseEnter={e=>e.currentTarget.style.background=o.v===value?($.primary+"22"):($.bg)} onMouseLeave={e=>e.currentTarget.style.background=o.v===value?($.primary+"18"):"transparent"}>
-              <div style={{minWidth:0,overflow:"hidden"}}>
-                <div style={{fontWeight:o.v===value?700:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{o.l}</div>
-                {o.loc&&<div style={{fontSize:12,color:$.muted,marginTop:2}}>📍 {o.loc}</div>}
-              </div>
+              <div style={{minWidth:0,overflow:"hidden"}}><div style={{fontWeight:o.v===value?700:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{o.l}</div>{o.loc&&<div style={{fontSize:12,color:$.muted,marginTop:2}}>📍 {o.loc}</div>}</div>
               {o.v===value&&<span style={{color:$.primary,fontSize:16,flexShrink:0,marginLeft:8}}>✓</span>}
             </div>)}
           </div>
@@ -232,7 +258,7 @@ function App(){
 
   const sp=(s)=>{const m={pending:[$.warnLight,$.warn],collected:[$.successLight,$.success],cancelled:[$.dangerLight,$.danger]};const[bg,fg]=m[s]||m.pending;return <span style={{background:bg,color:fg,fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:99,textTransform:"uppercase"}}>{s==="pending"?"credit":s}</span>;};
   const av=(emoji="🌾",bg=$.primaryLight,size=44)=><div style={{width:size,height:size,borderRadius:size*.3,background:bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:size*.45,flexShrink:0}}>{emoji}</div>;
-  const met=(icon,label,value,accent)=><div className="met-hover" style={{background:accent+"18",borderRadius:16,padding:"14px 12px",textAlign:"center",flex:1,minWidth:0}}><div style={{fontSize:20,marginBottom:2}}>{icon}</div><div style={{fontSize:17,fontWeight:800,color:accent,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{value}</div><div style={{fontSize:11,color:$.muted,fontWeight:600,marginTop:2}}>{label}</div></div>;
+  const met=(icon,label,value,accent)=><div className="met-hover" style={{background:accent+"18",borderRadius:16,padding:"12px 8px",textAlign:"center",flex:1,minWidth:0}}><div style={{fontSize:18,marginBottom:1}}>{icon}</div><div style={{fontSize:15,fontWeight:800,color:accent,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{value}</div><div style={{fontSize:10,color:$.muted,fontWeight:600,marginTop:2}}>{label}</div></div>;
   const btn=(text,onClick,bg=$.primary,fg="#fff",full=false,small=false,extra={})=>{const cls=bg===$.primary?"btn-primary":bg===$.success?"btn-success-h":bg===$.danger?"btn-danger-h":bg===$.purple?"btn-purple-h":"btn-ghost";return <button className={cls} onClick={onClick} style={{background:bg,color:fg,border:"none",borderRadius:14,padding:small?"10px 18px":"15px 24px",fontSize:small?14:16,fontWeight:700,cursor:"pointer",display:"inline-flex",alignItems:"center",justifyContent:"center",gap:8,width:full?"100%":"auto",fontFamily:"inherit",...extra}}>{saving&&<span style={{width:16,height:16,border:"2px solid rgba(255,255,255,0.3)",borderTopColor:fg,borderRadius:99,display:"inline-block",animation:"spin .5s linear infinite"}}/>}{text}</button>;};
   const gb=(text,onClick,color=$.muted)=><button className="btn-action" onClick={onClick} style={{background:"none",border:"none",color,fontSize:14,fontWeight:600,cursor:"pointer",padding:"8px 12px",fontFamily:"inherit"}}>{text}</button>;
   const cd=(children,onClick,style={})=><div className="card-hover" onClick={onClick} style={{background:$.card,borderRadius:16,padding:16,...style,...(onClick?{cursor:"pointer"}:{})}}>{children}</div>;
@@ -241,7 +267,7 @@ function App(){
 
   if(!loggedIn)return(
     <div style={{minHeight:"100vh",background:"linear-gradient(135deg,#1e3a5f,#2563eb,#1d4ed8)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
-      <div style={{width:"100%",maxWidth:380}}>
+      <div style={{width:"100%",maxWidth:420}}>
         <div style={{textAlign:"center",marginBottom:40}}><div style={{fontSize:64,marginBottom:12}}>🌾</div><div style={{fontSize:28,fontWeight:900,color:"#fff"}}>Broker Manager</div><div style={{fontSize:14,color:"rgba(255,255,255,0.7)",marginTop:6}}>Fertilizer Brokerage</div></div>
         <div style={{background:"rgba(255,255,255,0.95)",borderRadius:24,padding:28,boxShadow:"0 20px 60px rgba(0,0,0,0.3)"}}>
           <div style={{fontSize:20,fontWeight:800,marginBottom:24,textAlign:"center"}}>Welcome Back</div>
@@ -261,12 +287,12 @@ function App(){
 
   const renderHome=()=>(
     <div>
-      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}><div><div style={{fontSize:22,fontWeight:900,color:$.text}}>{cfg.biz}</div><div style={{fontSize:13,color:$.muted,marginTop:2}}>Hi {currentUser?.name} · {yr}</div></div><div style={{display:"flex",gap:8,alignItems:"center"}}>{yrSel}<button className="btn-action" onClick={()=>{setLoggedIn(false);setLoginUser("");setLoginPass("");}} style={{width:36,height:36,borderRadius:99,border:"1.5px solid "+$.border,background:$.card,fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>🚪</button></div></div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}><div><div style={{fontSize:22,fontWeight:900,color:$.text}}>{cfg.biz}</div><div style={{fontSize:13,color:$.muted,marginTop:2}}>Hi {currentUser?.name} · FY {fy}-{String(fy+1).slice(2)}</div></div><div style={{display:"flex",gap:8,alignItems:"center"}}>{yrSel}<button className="btn-action desktop-sidebar-hide" onClick={()=>{setLoggedIn(false);setLoginUser("");setLoginPass("");}} style={{width:36,height:36,borderRadius:99,border:"1.5px solid "+$.border,background:$.card,fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>🚪</button></div></div>
       <div style={{display:"flex",gap:10,marginBottom:20}}>{met("💼","Business",biz+" T",$.primary)}{met("💰","Commission",INR(comm),$.success)}{met("⏳","Credit",pend.length,$.warn)}</div>
-      {cd(<div><div style={{fontWeight:800,fontSize:15,marginBottom:14,color:$.text}}>Monthly Revenue</div><div style={{display:"flex",alignItems:"flex-end",gap:4,height:100}}>{mData.map((d,i)=><div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3}}><div style={{width:"100%",display:"flex",flexDirection:"column",justifyContent:"flex-end",height:72}}><div style={{width:"100%",background:"linear-gradient(to top,"+$.primary+","+$.primaryDark+")",borderRadius:"4px 4px 0 0",height:Math.max((d.biz/mMax)*100,d.biz>0?6:0)+"%"}}/></div><span style={{fontSize:9,color:$.muted,fontWeight:700}}>{d.m}</span></div>)}</div></div>,null,{marginBottom:20})}
+      {cd(<div><div style={{fontWeight:800,fontSize:15,marginBottom:14,color:$.text}}>Monthly Revenue</div><div style={{display:"flex",alignItems:"flex-end",gap:4,height:120}}>{mData.map((d,i)=><div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3}}><div style={{width:"100%",display:"flex",flexDirection:"column",justifyContent:"flex-end",height:90}}><div style={{width:"100%",background:"linear-gradient(to top,"+$.primary+","+$.primaryDark+")",borderRadius:"4px 4px 0 0",height:Math.max((d.biz/mMax)*100,d.biz>0?6:0)+"%",transition:"height .3s ease"}}/></div><span style={{fontSize:10,color:$.muted,fontWeight:700}}>{d.m}</span></div>)}</div></div>,null,{marginBottom:20})}
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}><span style={{fontWeight:800,fontSize:15,color:$.text}}>Recent Transactions</span>{gb("View All →",()=>setTab("txns"),$.primary)}</div>
       {yT.length===0?cd(<div style={{textAlign:"center",padding:24}}><div style={{fontSize:48}}>📋</div><div style={{fontWeight:700,color:$.muted,marginTop:8}}>No transactions yet</div>{btn("+ New Transaction",openNewTxn,$.primary,"#fff",false,false,{marginTop:16})}</div>):
-        <div style={{display:"flex",flexDirection:"column",gap:10}}>{yT.slice(-5).reverse().map(t=><div key={t.id}>{cd(<div style={{display:"flex",alignItems:"center",gap:12}}>{av()}<div style={{flex:1,minWidth:0}}><div style={{fontWeight:700,fontSize:14,color:$.text,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{nm("w",t.wholesalerId)} → {nm("r",t.retailerId)}</div><div style={{fontSize:12,color:$.muted,marginTop:2}}>{t.product} · {t.quantity} T</div></div><div style={{textAlign:"right",flexShrink:0}}><div style={{fontWeight:800,fontSize:15,color:$.text}}>{INR(t.amount||t.amt)}</div>{sp(t.status)}</div></div>,()=>openEditTxn(t))}</div>)}</div>}
+        <div className="rg rg-2" style={{gap:12}}>{yT.slice(-6).reverse().map(t=><div key={t.id}>{cd(<div style={{display:"flex",alignItems:"center",gap:12}}>{av()}<div style={{flex:1,minWidth:0}}><div style={{fontWeight:700,fontSize:14,color:$.text,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{nm("w",t.wholesalerId)} → {nm("r",t.retailerId)}</div><div style={{fontSize:12,color:$.muted,marginTop:2}}>{t.product} · {t.quantity} T</div></div><div style={{textAlign:"right",flexShrink:0}}><div style={{fontWeight:800,fontSize:15,color:$.text}}>{INR(t.amount||t.amt)}</div>{sp(t.status)}</div></div>,()=>openEditTxn(t))}</div>)}</div>}
     </div>
   );
 
@@ -286,7 +312,7 @@ function App(){
         <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search..." style={{...IS,marginBottom:12}}/>
         <div style={{display:"flex",gap:8,marginBottom:16}}>{met("📊","Count",list.length,$.primary)}{met("💼","Volume",vol+" T",$.success)}{met("💰","Comm",INR(cm),$.purple)}</div>
         {list.length===0?cd(<div style={{textAlign:"center",padding:40}}><div style={{fontSize:48}}>💰</div><div style={{fontWeight:700,color:$.muted}}>No transactions</div>{btn("+ New",openNewTxn,$.primary,"#fff",false,false,{marginTop:16})}</div>):
-          <div style={{display:"flex",flexDirection:"column",gap:12}}>{list.map(t=><div key={t.id}>{txnCard(t)}</div>)}</div>}
+          <div className="rg rg-2" style={{gap:12}}>{list.map(t=><div key={t.id}>{txnCard(t)}</div>)}</div>}
       </div>
     );
   };
@@ -305,7 +331,7 @@ function App(){
         {btn("📄 Download Statement",()=>genReport(p,type),$.success,"#fff",true,false,{marginBottom:16})}
         <div style={{fontWeight:800,fontSize:15,color:$.text,marginBottom:12}}>Transactions</div>
         {txns.length===0?cd(<div style={{textAlign:"center",padding:32}}><div style={{fontSize:40}}>📋</div><div style={{fontWeight:700,color:$.muted,fontSize:14}}>None</div>{btn("+ New",openNewTxn,$.primary,"#fff",false,true,{marginTop:14})}</div>):
-          <div style={{display:"flex",flexDirection:"column",gap:12}}>{txns.map(t=><div key={t.id}>{txnCard(t)}</div>)}</div>}
+          <div className="rg rg-2" style={{gap:12}}>{txns.map(t=><div key={t.id}>{txnCard(t)}</div>)}</div>}
       </div>
     );
   };
@@ -319,7 +345,7 @@ function App(){
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}><div style={{fontSize:22,fontWeight:900,color:$.text}}>{icon} {label}</div>{type==="r"&&btn("📥 Bulk",()=>{setBulkText("");setBulkPreview([]);setForm("bulk");},$.purple,"#fff",false,true)}</div>
         <input value={q} onChange={e=>setQ(e.target.value)} placeholder={"Search "+label.toLowerCase()+"..."} style={{...IS,marginBottom:14}}/>
         {filtered.length===0?cd(<div style={{textAlign:"center",padding:40}}><div style={{fontSize:48,marginBottom:8}}>{icon}</div><div style={{fontWeight:700,color:$.muted}}>No {label.toLowerCase()}</div>{btn("+ Add",()=>openNewParty(type),$.primary,"#fff",false,false,{marginTop:16})}</div>):
-          <div style={{display:"flex",flexDirection:"column",gap:10}}>{filtered.map(p=>{const txns=yT.filter(t=>type==="w"?t.wholesalerId===p.id:t.retailerId===p.id);const cm=txns.reduce((s,t)=>s+Number(type==="w"?(t.wholesalerCommission||t.wc||0):(t.retailerCommission||t.rc||0)),0);return <div key={p.id}>{cd(<div style={{display:"flex",alignItems:"center",gap:12}}>{av(icon,type==="w"?$.primaryLight:$.purpleLight)}<div style={{flex:1,minWidth:0}}><div style={{fontWeight:700,fontSize:15,color:$.text}}>{p.name}</div><div style={{fontSize:12,color:$.muted,marginTop:2}}>{p.location||"—"}</div></div><div style={{textAlign:"right",flexShrink:0}}><div style={{fontWeight:800,fontSize:14,color:$.text}}>{txns.length} txns</div><div style={{fontSize:12,fontWeight:700,color:$.success}}>{INR(cm)}</div></div></div>,()=>setDetail({id:p.id,type}))}</div>;})}</div>}
+          <div className="rg rg-2 rg-3" style={{gap:12}}>{filtered.map(p=>{const txns=yT.filter(t=>type==="w"?t.wholesalerId===p.id:t.retailerId===p.id);const cm=txns.reduce((s,t)=>s+Number(type==="w"?(t.wholesalerCommission||t.wc||0):(t.retailerCommission||t.rc||0)),0);return <div key={p.id}>{cd(<div style={{display:"flex",alignItems:"center",gap:12}}>{av(icon,type==="w"?$.primaryLight:$.purpleLight)}<div style={{flex:1,minWidth:0}}><div style={{fontWeight:700,fontSize:15,color:$.text}}>{p.name}</div><div style={{fontSize:12,color:$.muted,marginTop:2}}>{p.location||"—"}</div></div><div style={{textAlign:"right",flexShrink:0}}><div style={{fontWeight:800,fontSize:14,color:$.text}}>{txns.length} txns</div><div style={{fontSize:12,fontWeight:700,color:$.success}}>{INR(cm)}</div></div></div>,()=>setDetail({id:p.id,type}))}</div>;})}</div>}
       </div>
     );
   };
@@ -332,14 +358,18 @@ function App(){
       <div>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}><div style={{fontSize:22,fontWeight:900,color:$.text}}>Reports</div>{yrSel}</div>
         <div style={{display:"flex",gap:8,marginBottom:20}}>{met("💼","Business",biz+" T",$.primary)}{met("💰","Commission",INR(comm),$.success)}{met("✅","Collected",yT.filter(t=>t.status==="collected").length+"/"+yT.length,$.purple)}</div>
-        {cd(<div><div style={{fontWeight:800,fontSize:15,color:$.text,marginBottom:10}}>Monthly</div>{mData.filter(d=>d.n>0).map((d,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"10px 0",borderBottom:"1px solid "+$.border}}><span style={{fontWeight:600,color:$.text}}>{d.m}</span><div style={{display:"flex",gap:16,fontSize:14}}><span style={{color:$.text}}>{d.biz} T</span><span style={{color:$.muted}}>{d.n} txns</span></div></div>)}{mData.filter(d=>d.n>0).length===0&&<div style={{textAlign:"center",padding:20,color:$.muted}}>No data</div>}</div>,null,{marginBottom:16})}
-        {cd(<div><div style={{fontWeight:800,fontSize:15,color:$.text,marginBottom:4}}>📄 Statements</div><div style={{fontSize:12,color:$.muted,marginBottom:12}}>Download per party</div><input value={q} onChange={e=>setQ(e.target.value)} placeholder="🔍 Search..." style={{...IS,marginBottom:14,fontSize:14}}/>
-          <div style={{fontWeight:700,fontSize:13,color:$.primary,marginBottom:8}}>Wholesalers</div>
-          {sf(W).length===0?<div style={{fontSize:13,color:$.muted,marginBottom:12}}>None</div>:<div style={{display:"flex",flexDirection:"column",gap:6,marginBottom:16}}>{sf(W).map(w=>{const n=yT.filter(t=>t.wholesalerId===w.id).length;return <div key={w.id} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 12px",background:$.bg,borderRadius:12}}><div><span style={{fontWeight:700,fontSize:14,color:$.text}}>{w.name}</span>{w.location&&<span style={{fontSize:12,color:$.muted,marginLeft:6}}>📍{w.location}</span>}<span style={{fontSize:12,color:$.muted,marginLeft:8}}>{n}</span></div><button onClick={()=>genReport(w,"w")} disabled={n===0} style={{background:n>0?$.primary:$.border,color:n>0?"#fff":$.muted,border:"none",borderRadius:10,padding:"8px 14px",fontSize:12,fontWeight:700,cursor:n>0?"pointer":"default",fontFamily:"inherit"}}>📄</button></div>;})}</div>}
-          <div style={{fontWeight:700,fontSize:13,color:$.purple,marginBottom:8}}>Retailers</div>
-          {sf(R).length===0?<div style={{fontSize:13,color:$.muted}}>None</div>:<div style={{display:"flex",flexDirection:"column",gap:6}}>{sf(R).map(r=>{const n=yT.filter(t=>t.retailerId===r.id).length;return <div key={r.id} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 12px",background:$.bg,borderRadius:12}}><div><span style={{fontWeight:700,fontSize:14,color:$.text}}>{r.name}</span>{r.location&&<span style={{fontSize:12,color:$.muted,marginLeft:6}}>📍{r.location}</span>}<span style={{fontSize:12,color:$.muted,marginLeft:8}}>{n}</span></div><button onClick={()=>genReport(r,"r")} disabled={n===0} style={{background:n>0?$.purple:$.border,color:n>0?"#fff":$.muted,border:"none",borderRadius:10,padding:"8px 14px",fontSize:12,fontWeight:700,cursor:n>0?"pointer":"default",fontFamily:"inherit"}}>📄</button></div>;})}</div>}
-        </div>,null,{marginBottom:16,border:"2px solid "+$.primaryLight})}
-        {[["🏭 Top Wholesalers",wTop.slice(0,5)],["🏪 Top Retailers",rTop.slice(0,5)]].map(([title,data])=><div key={title}>{cd(<div><div style={{fontWeight:800,fontSize:15,color:$.text,marginBottom:10}}>{title}</div>{data.length===0?<div style={{textAlign:"center",padding:16,color:$.muted}}>No data</div>:data.map((p,i)=><div key={p.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:"1px solid "+$.border}}><div style={{display:"flex",alignItems:"center",gap:8}}><span style={{color:$.muted,fontSize:13,width:20}}>#{i+1}</span><span style={{fontWeight:600,color:$.text}}>{p.name}</span></div><div style={{textAlign:"right"}}><div style={{fontWeight:700,fontSize:14,color:$.text}}>{p.b} T</div><div style={{fontSize:11,color:$.success,fontWeight:600}}>{INR(p.cc)}</div></div></div>)}</div>,null,{marginBottom:16})}</div>)}
+        <div className="rg rg-2" style={{gap:16,marginBottom:16}}>
+          {cd(<div><div style={{fontWeight:800,fontSize:15,color:$.text,marginBottom:10}}>Monthly</div>{mData.filter(d=>d.n>0).map((d,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"10px 0",borderBottom:"1px solid "+$.border}}><span style={{fontWeight:600,color:$.text}}>{d.m}</span><div style={{display:"flex",gap:16,fontSize:14}}><span style={{color:$.text}}>{d.biz} T</span><span style={{color:$.muted}}>{d.n} txns</span></div></div>)}{mData.filter(d=>d.n>0).length===0&&<div style={{textAlign:"center",padding:20,color:$.muted}}>No data</div>}</div>)}
+          {cd(<div><div style={{fontWeight:800,fontSize:15,color:$.text,marginBottom:4}}>📄 Statements</div><div style={{fontSize:12,color:$.muted,marginBottom:12}}>Download per party</div><input value={q} onChange={e=>setQ(e.target.value)} placeholder="🔍 Search..." style={{...IS,marginBottom:14,fontSize:14}}/>
+            <div style={{fontWeight:700,fontSize:13,color:$.primary,marginBottom:8}}>Wholesalers</div>
+            {sf(W).length===0?<div style={{fontSize:13,color:$.muted,marginBottom:12}}>None</div>:<div style={{display:"flex",flexDirection:"column",gap:6,marginBottom:16}}>{sf(W).map(w=>{const n=yT.filter(t=>t.wholesalerId===w.id).length;return <div key={w.id} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 12px",background:$.bg,borderRadius:12}}><div style={{minWidth:0,overflow:"hidden"}}><span style={{fontWeight:700,fontSize:14,color:$.text}}>{w.name}</span>{w.location&&<span style={{fontSize:12,color:$.muted,marginLeft:6}}>📍{w.location}</span>}<span style={{fontSize:12,color:$.muted,marginLeft:8}}>{n}</span></div><button onClick={()=>genReport(w,"w")} disabled={n===0} style={{background:n>0?$.primary:$.border,color:n>0?"#fff":$.muted,border:"none",borderRadius:10,padding:"8px 14px",fontSize:12,fontWeight:700,cursor:n>0?"pointer":"default",fontFamily:"inherit",flexShrink:0}}>📄</button></div>;})}</div>}
+            <div style={{fontWeight:700,fontSize:13,color:$.purple,marginBottom:8}}>Retailers</div>
+            {sf(R).length===0?<div style={{fontSize:13,color:$.muted}}>None</div>:<div style={{display:"flex",flexDirection:"column",gap:6}}>{sf(R).map(r=>{const n=yT.filter(t=>t.retailerId===r.id).length;return <div key={r.id} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 12px",background:$.bg,borderRadius:12}}><div style={{minWidth:0,overflow:"hidden"}}><span style={{fontWeight:700,fontSize:14,color:$.text}}>{r.name}</span>{r.location&&<span style={{fontSize:12,color:$.muted,marginLeft:6}}>📍{r.location}</span>}<span style={{fontSize:12,color:$.muted,marginLeft:8}}>{n}</span></div><button onClick={()=>genReport(r,"r")} disabled={n===0} style={{background:n>0?$.purple:$.border,color:n>0?"#fff":$.muted,border:"none",borderRadius:10,padding:"8px 14px",fontSize:12,fontWeight:700,cursor:n>0?"pointer":"default",fontFamily:"inherit",flexShrink:0}}>📄</button></div>;})}</div>}
+          </div>,null,{border:"2px solid "+$.primaryLight})}
+        </div>
+        <div className="rg rg-2" style={{gap:16}}>
+          {[["🏭 Top Wholesalers",wTop.slice(0,5)],["🏪 Top Retailers",rTop.slice(0,5)]].map(([title,data])=><div key={title}>{cd(<div><div style={{fontWeight:800,fontSize:15,color:$.text,marginBottom:10}}>{title}</div>{data.length===0?<div style={{textAlign:"center",padding:16,color:$.muted}}>No data</div>:data.map((p,i)=><div key={p.id} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:"1px solid "+$.border}}><div style={{display:"flex",alignItems:"center",gap:8}}><span style={{color:$.muted,fontSize:13,width:20}}>#{i+1}</span><span style={{fontWeight:600,color:$.text}}>{p.name}</span></div><div style={{textAlign:"right"}}><div style={{fontWeight:700,fontSize:14,color:$.text}}>{p.b} T</div><div style={{fontSize:11,color:$.success,fontWeight:600}}>{INR(p.cc)}</div></div></div>)}</div>)}</div>)}
+        </div>
       </div>
     );
   };
@@ -348,9 +378,13 @@ function App(){
     <div>
       <div style={{fontSize:22,fontWeight:900,color:$.text,marginBottom:20}}>👤 Profile</div>
       {cd(<div><div style={{display:"flex",alignItems:"center",gap:14}}><div style={{width:60,height:60,borderRadius:99,background:$.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,fontWeight:900,color:$.primary}}>{currentUser?.name?.[0]}</div><div style={{flex:1}}><div style={{fontSize:20,fontWeight:900,color:$.text}}>{currentUser?.name}</div><div style={{fontSize:13,color:$.muted}}>@{currentUser?.username}</div></div><span style={{fontSize:20,color:$.muted}}>✏️</span></div><div style={{fontSize:12,color:$.primary,fontWeight:600,marginTop:10,textAlign:"center"}}>Tap to edit</div></div>,()=>{setProfName(currentUser?.name||"");setOldPw("");setNewPw("");setConfirmPw("");setEditProfile(true);},{marginBottom:16})}
-      {cd(<div><div style={{fontWeight:800,color:$.text,marginBottom:16}}>Business Info</div>{inp("Business Name",{value:cfg.biz,onChange:e=>saveCfg({...cfg,biz:e.target.value})})}{inp("Owner Name",{value:cfg.owner,onChange:e=>saveCfg({...cfg,owner:e.target.value})})}<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{inp("W Comm (₹/T)",{type:"number",value:cfg.wRate,onChange:e=>saveCfg({...cfg,wRate:e.target.value})})}{inp("R Comm (₹/T)",{type:"number",value:cfg.rRate,onChange:e=>saveCfg({...cfg,rRate:e.target.value})})}</div></div>,null,{marginBottom:16})}
-      {cd(<div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}><div><div style={{fontWeight:800,color:$.text}}>🌙 Dark Mode</div><div style={{fontSize:12,color:$.muted,marginTop:2}}>Easier on eyes</div></div><button onClick={()=>setDark(!dark)} style={{width:56,height:30,borderRadius:15,border:"none",background:dark?$.primary:$.border,cursor:"pointer",position:"relative",transition:"background .2s"}}><div style={{width:24,height:24,borderRadius:12,background:"#fff",position:"absolute",top:3,left:dark?29:3,transition:"left .2s",boxShadow:"0 1px 4px rgba(0,0,0,0.2)"}}/></button></div>,null,{marginBottom:16})}
-      {cd(<div><div style={{fontWeight:800,color:$.danger,marginBottom:10}}>Danger Zone</div><div style={{display:"flex",gap:10,flexWrap:"wrap"}}>{btn("Reset",()=>{if(confirm("Delete ALL?")){setW([]);setR([]);setT([]);setTab("home");flash("Cleared");}},$.danger,"#fff",false,true)}{btn("Logout",()=>{setLoggedIn(false);setLoginUser("");setLoginPass("");},$.bg,$.danger,false,true)}</div></div>,null,{border:"1.5px solid "+$.dangerLight})}
+      <div className="rg rg-2" style={{gap:16,marginBottom:16}}>
+        {cd(<div><div style={{fontWeight:800,color:$.text,marginBottom:16}}>Business Info</div>{inp("Business Name",{value:cfg.biz,onChange:e=>saveCfg({...cfg,biz:e.target.value})})}{inp("Owner Name",{value:cfg.owner,onChange:e=>saveCfg({...cfg,owner:e.target.value})})}<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{inp("W Comm (₹/T)",{type:"number",value:cfg.wRate,onChange:e=>saveCfg({...cfg,wRate:e.target.value})})}{inp("R Comm (₹/T)",{type:"number",value:cfg.rRate,onChange:e=>saveCfg({...cfg,rRate:e.target.value})})}</div></div>)}
+        <div style={{display:"flex",flexDirection:"column",gap:16}}>
+          {cd(<div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}><div><div style={{fontWeight:800,color:$.text}}>🌙 Dark Mode</div><div style={{fontSize:12,color:$.muted,marginTop:2}}>Easier on eyes</div></div><button onClick={()=>setDark(!dark)} style={{width:56,height:30,borderRadius:15,border:"none",background:dark?$.primary:$.border,cursor:"pointer",position:"relative",transition:"background .2s"}}><div style={{width:24,height:24,borderRadius:12,background:"#fff",position:"absolute",top:3,left:dark?29:3,transition:"left .2s",boxShadow:"0 1px 4px rgba(0,0,0,0.2)"}}/></button></div>)}
+          {cd(<div><div style={{fontWeight:800,color:$.danger,marginBottom:10}}>Danger Zone</div><div style={{display:"flex",gap:10,flexWrap:"wrap"}}>{btn("Reset",()=>{if(confirm("Delete ALL?")){setW([]);setR([]);setT([]);setTab("home");flash("Cleared");}},$.danger,"#fff",false,true)}{btn("Logout",()=>{setLoggedIn(false);setLoginUser("");setLoginPass("");},$.bg,$.danger,false,true)}</div></div>,null,{border:"1.5px solid "+$.dangerLight})}
+        </div>
+      </div>
     </div>
   );
 
@@ -358,10 +392,28 @@ function App(){
 
   return(
     <div className={dark?"dark":""} style={{minHeight:"100vh",background:$.bg,transition:"background .3s"}}>
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
       {toast&&<div style={{position:"fixed",top:16,left:"50%",transform:"translateX(-50%)",zIndex:200,background:$.success,color:"#fff",padding:"10px 24px",borderRadius:14,fontWeight:700,fontSize:14,boxShadow:"0 8px 24px rgba(0,0,0,0.2)"}}>{toast}</div>}
       {loading&&<div style={{position:"fixed",inset:0,zIndex:300,background:$.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}><div style={{fontSize:56,marginBottom:16}}>🌾</div><div style={{fontWeight:800,fontSize:18,color:$.text}}>Loading...</div></div>}
-      <div style={{padding:"16px 16px 100px",maxWidth:540,margin:"0 auto"}}>
+
+      {/* Desktop Sidebar */}
+      <div className="desktop-sidebar" style={{position:"fixed",top:0,left:0,bottom:0,width:220,background:$.card,borderRight:"1px solid "+$.border,zIndex:80,flexDirection:"column",padding:"24px 0"}}>
+        <div style={{padding:"0 20px 24px",borderBottom:"1px solid "+$.border}}>
+          <div style={{fontSize:28,marginBottom:4}}>🌾</div>
+          <div style={{fontSize:16,fontWeight:900,color:$.text}}>{cfg.biz}</div>
+          <div style={{fontSize:12,color:$.muted,marginTop:2}}>Hi {currentUser?.name}</div>
+        </div>
+        <div style={{flex:1,padding:"12px 10px",display:"flex",flexDirection:"column",gap:2}}>
+          {tabList.map(t=><button key={t.id} onClick={()=>{setTab(t.id);setDetail(null);setQ("");}} style={{display:"flex",alignItems:"center",gap:12,padding:"12px 14px",borderRadius:12,border:"none",background:tab===t.id?($.primary+"14"):"transparent",color:tab===t.id?$.primary:$.muted,cursor:"pointer",fontSize:15,fontWeight:tab===t.id?700:500,fontFamily:"inherit",textAlign:"left",transition:"all .15s"}}>
+            <span style={{fontSize:20}}>{t.icon}</span>{t.label}
+          </button>)}
+        </div>
+        <div style={{padding:"12px 16px",borderTop:"1px solid "+$.border}}>
+          <button onClick={()=>{setLoggedIn(false);setLoginUser("");setLoginPass("");}} style={{display:"flex",alignItems:"center",gap:8,background:"none",border:"none",color:$.danger,cursor:"pointer",fontSize:14,fontWeight:600,fontFamily:"inherit",padding:"8px 4px"}}>🚪 Logout</button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="main-content" style={{maxWidth:1100}}>
         {tab==="home"&&renderHome()}
         {tab==="txns"&&renderTxns()}
         {tab==="wholesale"&&renderPartyList("w")}
@@ -369,25 +421,53 @@ function App(){
         {tab==="reports"&&renderReports()}
         {tab==="profile"&&renderProfile()}
       </div>
-      {["home","txns","wholesale","retail"].includes(tab)&&<button className="fab-hover" onClick={tab==="wholesale"?()=>openNewParty("w"):tab==="retail"?()=>openNewParty("r"):openNewTxn} style={{position:"fixed",bottom:84,right:20,zIndex:50,width:58,height:58,borderRadius:99,border:"none",background:"linear-gradient(135deg,"+$.primary+","+$.primaryDark+")",color:"#fff",fontSize:28,cursor:"pointer",boxShadow:"0 6px 20px "+$.primary+"60",display:"flex",alignItems:"center",justifyContent:"center"}}>+</button>}
-      <div style={{position:"fixed",bottom:0,left:0,right:0,background:$.card,borderTop:"1px solid "+$.border,zIndex:90,paddingBottom:"env(safe-area-inset-bottom)"}}><div style={{display:"flex",maxWidth:540,margin:"0 auto"}}>{tabList.map(t=><button key={t.id} className="nav-btn" onClick={()=>{setTab(t.id);setDetail(null);setQ("");}} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",padding:"8px 0 6px",border:"none",background:"none",cursor:"pointer",color:tab===t.id?$.primary:$.muted}}><span style={{fontSize:20,lineHeight:1,position:"relative",zIndex:1}}>{t.icon}</span><span style={{fontSize:10,fontWeight:700,marginTop:3,position:"relative",zIndex:1}}>{t.label}</span>{tab===t.id&&<div style={{width:20,height:3,borderRadius:2,background:$.primary,marginTop:2,position:"relative",zIndex:1}}/>}</button>)}</div></div>
 
+      {/* FAB */}
+      {["home","txns","wholesale","retail"].includes(tab)&&<button className="fab-hover fab-pos" onClick={tab==="wholesale"?()=>openNewParty("w"):tab==="retail"?()=>openNewParty("r"):openNewTxn} style={{position:"fixed",zIndex:50,width:58,height:58,borderRadius:99,border:"none",background:"linear-gradient(135deg,"+$.primary+","+$.primaryDark+")",color:"#fff",fontSize:28,cursor:"pointer",boxShadow:"0 6px 20px "+$.primary+"60",display:"flex",alignItems:"center",justifyContent:"center"}}>+</button>}
+
+      {/* Mobile Bottom Nav */}
+      <div className="mobile-nav" style={{position:"fixed",bottom:0,left:0,right:0,background:$.card,borderTop:"1px solid "+$.border,zIndex:90,paddingBottom:"env(safe-area-inset-bottom)"}}>
+        <div className="mobile-nav-inner">
+          {tabList.map(t=><button key={t.id} onClick={()=>{setTab(t.id);setDetail(null);setQ("");}}>
+            <span className="nav-icon" style={{color:tab===t.id?$.primary:$.muted,fontSize:22}}>{t.icon}</span>
+            <span className="nav-label" style={{color:tab===t.id?$.primary:$.muted}}>{t.label}</span>
+            {tab===t.id&&<div style={{position:"absolute",top:0,left:"50%",transform:"translateX(-50%)",width:28,height:3,borderRadius:2,background:$.primary}}/>}
+          </button>)}
+        </div>
+      </div>
+
+      {/* --- MODALS --- */}
       <ModalShell open={form==="party"} title={edit?.id?"Edit":"Add "+(edit?._t==="w"?"Wholesaler":"Retailer")} onClose={closeForm} bgC={$.card} borderC={$.border} textC={$.text} mutedC={$.muted} bg={$.bg}>
-        {edit&&<div>{inp("Name *",{value:edit.name,onChange:e=>setEdit({...edit,name:e.target.value}),placeholder:"Name"})}{inp("Phone",{value:edit.phone,onChange:e=>setEdit({...edit,phone:e.target.value}),placeholder:"Phone",type:"tel"})}{inp("Location",{value:edit.location,onChange:e=>setEdit({...edit,location:e.target.value}),placeholder:"City"})}{inp("GST",{value:edit.gst,onChange:e=>setEdit({...edit,gst:e.target.value}),placeholder:"GST"})}{inp("Notes",{value:edit.notes,onChange:e=>setEdit({...edit,notes:e.target.value}),placeholder:"Notes"})}<div style={{display:"flex",gap:12,marginTop:8}}>{btn("Cancel",closeForm,$.bg,$.muted,true)}{btn(edit.id?"Update":"Add",saveParty,$.primary,"#fff",true)}</div></div>}
+        {edit&&<div>
+          <div className="form-grid">
+            {inp("Name *",{value:edit.name,onChange:e=>setEdit({...edit,name:e.target.value}),placeholder:"Name"})}
+            {inp("Phone",{value:edit.phone,onChange:e=>setEdit({...edit,phone:e.target.value}),placeholder:"Phone",type:"tel"})}
+            {inp("Location",{value:edit.location,onChange:e=>setEdit({...edit,location:e.target.value}),placeholder:"City"})}
+            {inp("GST",{value:edit.gst,onChange:e=>setEdit({...edit,gst:e.target.value}),placeholder:"GST"})}
+          </div>
+          {inp("Notes",{value:edit.notes,onChange:e=>setEdit({...edit,notes:e.target.value}),placeholder:"Notes"})}
+          <div style={{display:"flex",gap:12,marginTop:8}}>{btn("Cancel",closeForm,$.bg,$.muted,true)}{btn(edit.id?"Update":"Add",saveParty,$.primary,"#fff",true)}</div>
+        </div>}
       </ModalShell>
 
-      <ModalShell open={form==="txn"} title={edit?.id?"Edit Transaction":"New Transaction"} onClose={closeForm} bgC={$.card} borderC={$.border} textC={$.text} mutedC={$.muted} bg={$.bg}>
+      <ModalShell open={form==="txn"} title={edit?.id?"Edit Transaction":"New Transaction"} onClose={closeForm} bgC={$.card} borderC={$.border} textC={$.text} mutedC={$.muted} bg={$.bg} wide>
         {edit&&<div>
-          {inp("Date *",{type:"date",value:edit.date,onChange:e=>setEdit({...edit,date:e.target.value})})}
-          <SearchSelect label="Wholesaler *" options={W.map(w=>({v:w.id,l:w.name,loc:w.location||""}))} value={edit.wid} onChange={v=>setEdit({...edit,wid:v})} theme={$}/>
-          <SearchSelect label="Retailer *" options={R.map(r=>({v:r.id,l:r.name,loc:r.location||""}))} value={edit.rid} onChange={v=>setEdit({...edit,rid:v})} theme={$}/>
-          {inp("Product *",{value:edit.product,onChange:e=>setEdit({...edit,product:e.target.value}),placeholder:"DAP, Urea..."})}
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{inp("Qty (T)",{type:"number",value:edit.qty,onChange:e=>setEdit(calc({...edit,qty:e.target.value}))})}{inp("Rate (₹/T)",{type:"number",value:edit.rate,onChange:e=>setEdit(calc({...edit,rate:e.target.value}))})}</div>
-          <div style={{background:$.primaryLight,borderRadius:14,padding:14,textAlign:"center",marginBottom:16}}><div style={{fontSize:12,color:$.primary,fontWeight:600}}>Amount</div><div style={{fontSize:24,fontWeight:900,color:$.primary}}>{INR(edit.amt)}</div></div>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{inp("W Comm ₹",{type:"number",value:edit.wc,onChange:e=>setEdit({...edit,wc:e.target.value})})}{inp("R Comm ₹",{type:"number",value:edit.rc,onChange:e=>setEdit({...edit,rc:e.target.value})})}</div>
-          <div style={{background:$.successLight,borderRadius:14,padding:14,textAlign:"center",marginBottom:16}}><div style={{fontSize:12,color:$.success,fontWeight:600}}>Total Commission</div><div style={{fontSize:24,fontWeight:900,color:$.success}}>{INR(Number(edit.wc||0)+Number(edit.rc||0))}</div></div>
-          {sel("Status",[{v:"pending",l:"💳 Credit"},{v:"collected",l:"✅ Collected"},{v:"cancelled",l:"❌ Cancelled"}],{value:edit.status,onChange:e=>setEdit({...edit,status:e.target.value})})}
-          {inp("Notes",{value:edit.notes,onChange:e=>setEdit({...edit,notes:e.target.value}),placeholder:"Notes"})}
+          <div className="form-grid">
+            <div>
+              {inp("Date *",{type:"date",value:edit.date,onChange:e=>setEdit({...edit,date:e.target.value})})}
+              <SearchSelect label="Wholesaler *" options={W.map(w=>({v:w.id,l:w.name,loc:w.location||""}))} value={edit.wid} onChange={v=>setEdit({...edit,wid:v})} theme={$}/>
+              <SearchSelect label="Retailer *" options={R.map(r=>({v:r.id,l:r.name,loc:r.location||""}))} value={edit.rid} onChange={v=>setEdit({...edit,rid:v})} theme={$}/>
+              {inp("Product *",{value:edit.product,onChange:e=>setEdit({...edit,product:e.target.value}),placeholder:"DAP, Urea..."})}
+            </div>
+            <div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{inp("Qty (T)",{type:"number",value:edit.qty,onChange:e=>setEdit(calc({...edit,qty:e.target.value}))})}{inp("Rate (₹/T)",{type:"number",value:edit.rate,onChange:e=>setEdit(calc({...edit,rate:e.target.value}))})}</div>
+              <div style={{background:$.primaryLight,borderRadius:14,padding:14,textAlign:"center",marginBottom:16}}><div style={{fontSize:12,color:$.primary,fontWeight:600}}>Amount</div><div style={{fontSize:24,fontWeight:900,color:$.primary}}>{INR(edit.amt)}</div></div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{inp("W Comm ₹",{type:"number",value:edit.wc,onChange:e=>setEdit({...edit,wc:e.target.value})})}{inp("R Comm ₹",{type:"number",value:edit.rc,onChange:e=>setEdit({...edit,rc:e.target.value})})}</div>
+              <div style={{background:$.successLight,borderRadius:14,padding:14,textAlign:"center",marginBottom:16}}><div style={{fontSize:12,color:$.success,fontWeight:600}}>Total Commission</div><div style={{fontSize:24,fontWeight:900,color:$.success}}>{INR(Number(edit.wc||0)+Number(edit.rc||0))}</div></div>
+              {sel("Status",[{v:"pending",l:"💳 Credit"},{v:"collected",l:"✅ Collected"},{v:"cancelled",l:"❌ Cancelled"}],{value:edit.status,onChange:e=>setEdit({...edit,status:e.target.value})})}
+              {inp("Notes",{value:edit.notes,onChange:e=>setEdit({...edit,notes:e.target.value}),placeholder:"Notes"})}
+            </div>
+          </div>
           <div style={{display:"flex",gap:12,marginTop:8}}>{btn("Cancel",closeForm,$.bg,$.muted,true)}{btn(edit.id?"Update":"Save",saveTxn,$.success,"#fff",true)}</div>
         </div>}
       </ModalShell>
@@ -406,8 +486,7 @@ function App(){
         <div style={{height:1,background:$.border,margin:"8px 0 16px"}}/>
         <div style={{fontWeight:700,fontSize:14,color:$.text,marginBottom:12}}>Change Password (optional)</div>
         {inp("Current",{type:"password",value:oldPw,onChange:e=>setOldPw(e.target.value)})}
-        {inp("New",{type:"password",value:newPw,onChange:e=>setNewPw(e.target.value)})}
-        {inp("Confirm",{type:"password",value:confirmPw,onChange:e=>setConfirmPw(e.target.value)})}
+        <div className="form-grid">{inp("New",{type:"password",value:newPw,onChange:e=>setNewPw(e.target.value)})}{inp("Confirm",{type:"password",value:confirmPw,onChange:e=>setConfirmPw(e.target.value)})}</div>
         <div style={{display:"flex",gap:12,marginTop:8}}>{btn("Cancel",()=>setEditProfile(false),$.bg,$.muted,true)}{btn("Save",saveProfile,$.primary,"#fff",true)}</div>
       </ModalShell>
     </div>
