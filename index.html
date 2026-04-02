@@ -9,7 +9,56 @@
 <title>Broker Manager</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌾</text></svg>"/>
 <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQnJva2VyIE1hbmFnZXIiLCJzaG9ydF9uYW1lIjoiQnJva2VyIiwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJ0aGVtZV9jb2xvciI6IiMyNTYzZWIiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiI2YxZjVmOSJ9"/>
-<style>*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f1f5f9;overscroll-behavior:none}</style>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f1f5f9;overscroll-behavior:none;-webkit-font-smoothing:antialiased}
+.card-hover{transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+.card-hover:hover{transform:translateY(-3px) scale(1.003);box-shadow:0 12px 28px rgba(0,0,0,0.08),0 2px 8px rgba(0,0,0,0.04)}
+.card-hover:active{transform:translateY(0) scale(0.995);box-shadow:0 2px 6px rgba(0,0,0,0.06)}
+.btn-primary{transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,99,235,0.3);filter:brightness(1.08)}
+.btn-primary:active{transform:translateY(0) scale(0.97);box-shadow:0 2px 8px rgba(37,99,235,0.2)}
+.btn-success-h{transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
+.btn-success-h:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(5,150,105,0.25);filter:brightness(1.08)}
+.btn-success-h:active{transform:translateY(0) scale(0.97)}
+.btn-danger-h{transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
+.btn-danger-h:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(220,38,38,0.2);filter:brightness(1.08)}
+.btn-danger-h:active{transform:translateY(0) scale(0.97)}
+.btn-purple-h{transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
+.btn-purple-h:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(124,58,237,0.25);filter:brightness(1.08)}
+.btn-purple-h:active{transform:translateY(0) scale(0.97)}
+.btn-ghost{transition:background .2s ease,transform .15s ease}
+.btn-ghost:hover{background:rgba(0,0,0,0.04);transform:scale(1.02)}
+.btn-ghost:active{transform:scale(0.96);opacity:0.7}
+.btn-action{transition:transform .15s ease,background .15s ease;border-radius:10px}
+.btn-action:hover{background:rgba(0,0,0,0.05);transform:scale(1.15)}
+.btn-action:active{transform:scale(0.9)}
+.fab-hover{transition:transform .25s cubic-bezier(.4,0,.2,1),box-shadow .25s ease}
+.fab-hover:hover{transform:scale(1.08) rotate(90deg);box-shadow:0 10px 30px rgba(37,99,235,0.4)}
+.fab-hover:active{transform:scale(0.95) rotate(90deg)}
+.nav-btn{transition:transform .2s ease,color .2s ease;position:relative}
+.nav-btn::after{content:'';position:absolute;top:4px;left:50%;transform:translateX(-50%) scale(0);width:42px;height:42px;border-radius:13px;background:rgba(37,99,235,0.06);transition:transform .25s cubic-bezier(.4,0,.2,1),opacity .2s;opacity:0}
+.nav-btn:hover::after{transform:translateX(-50%) scale(1);opacity:1}
+.nav-btn:hover{transform:translateY(-2px)}
+.nav-btn:active{transform:translateY(0) scale(0.92)}
+.sel-hover{transition:border-color .2s ease,box-shadow .2s ease}
+.sel-hover:hover{border-color:rgba(37,99,235,0.3);box-shadow:0 2px 12px rgba(37,99,235,0.08)}
+.sel-hover:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+.inp-glow{transition:border-color .2s ease,box-shadow .2s ease}
+.inp-glow:focus{border-color:#2563eb !important;box-shadow:0 0 0 3px rgba(37,99,235,0.1) !important}
+.met-hover{transition:transform .2s ease,box-shadow .2s ease}
+.met-hover:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.06)}
+.report-row{transition:background .15s ease,transform .15s ease}
+.report-row:hover{background:rgba(37,99,235,0.04) !important;transform:translateX(4px)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.dark .card-hover:hover{box-shadow:0 12px 28px rgba(0,0,0,0.25),0 2px 8px rgba(0,0,0,0.15)}
+.dark .btn-ghost:hover{background:rgba(255,255,255,0.06)}
+.dark .btn-action:hover{background:rgba(255,255,255,0.08)}
+.dark .nav-btn::after{background:rgba(96,165,250,0.1)}
+.dark .report-row:hover{background:rgba(96,165,250,0.06) !important}
+.dark .inp-glow:focus{border-color:#60a5fa !important;box-shadow:0 0 0 3px rgba(96,165,250,0.15) !important}
+.dark .sel-hover:hover{border-color:rgba(96,165,250,0.3);box-shadow:0 2px 12px rgba(96,165,250,0.1)}
+</style>
 </head>
 <body>
 <div id="root"></div>
@@ -17,7 +66,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script type="text/babel">
-const {useState,useRef,useEffect}=React;
+const {useState,useRef,useEffect,useCallback}=React;
 const ID=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const INR=(v)=>"₹"+Number(v||0).toLocaleString("en-IN");
 const GAS_URL="https://script.google.com/macros/s/AKfycbwJ4Mx2QMdrhYdTPYATG3ATkbJDVBhb_nWYHJyBaVBTs5zBLddSgQz5evR38k6UUd-b/exec";
@@ -58,6 +107,51 @@ const ModalShell=({open,title,onClose,children,bg,borderC,textC,mutedC,bgC})=>{
   );
 };
 
+const SearchSelect=({label,options,value,onChange,placeholder,theme})=>{
+  const[open,setOpen]=useState(false);
+  const[sq,setSq]=useState("");
+  const ref=useRef(null);
+  const inputRef=useRef(null);
+  const selected=options.find(o=>o.v===value);
+  const filtered=options.filter(o=>o.l.toLowerCase().includes(sq.toLowerCase())||(o.loc||"").toLowerCase().includes(sq.toLowerCase()));
+
+  useEffect(()=>{
+    const handler=(e)=>{if(ref.current&&!ref.current.contains(e.target)){setOpen(false);setSq("");}};
+    document.addEventListener("mousedown",handler);document.addEventListener("touchstart",handler);
+    return()=>{document.removeEventListener("mousedown",handler);document.removeEventListener("touchstart",handler);};
+  },[]);
+
+  useEffect(()=>{if(open&&inputRef.current)inputRef.current.focus();},[open]);
+
+  const $=theme;
+  return(
+    <div style={{marginBottom:16}} ref={ref}>
+      <label style={{display:"block",fontSize:13,fontWeight:600,color:$.muted,marginBottom:6}}>{label}</label>
+      <div style={{position:"relative"}}>
+        <div onClick={()=>{setOpen(!open);setSq("");}} style={{width:"100%",border:"1.5px solid "+(open?$.primary:$.border),borderRadius:open?"12px 12px 0 0":"12px",padding:"14px 16px",fontSize:16,boxSizing:"border-box",fontFamily:"inherit",background:$.dark?"#1a1f30":$.card,color:selected?$.text:$.muted,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between",transition:"border-color .2s,box-shadow .2s",boxShadow:open?"0 0 0 3px "+$.primary+"1a":"none"}}>
+          <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{selected?selected.l:(placeholder||"Choose...")}</span>
+          <span style={{fontSize:12,color:$.muted,flexShrink:0,marginLeft:8,transform:open?"rotate(180deg)":"rotate(0)",transition:"transform .2s"}}>▼</span>
+        </div>
+        {open&&<div style={{position:"absolute",top:"100%",left:0,right:0,background:$.dark?"#1a1f30":$.card,border:"1.5px solid "+$.primary,borderTop:"none",borderRadius:"0 0 12px 12px",zIndex:100,boxShadow:"0 12px 32px rgba(0,0,0,0.15)",overflow:"hidden"}}>
+          <div style={{padding:"8px 10px",borderBottom:"1px solid "+$.border}}>
+            <input ref={inputRef} value={sq} onChange={e=>setSq(e.target.value)} placeholder={"Search "+label.toLowerCase().replace(" *","")+"..."} style={{width:"100%",border:"1.5px solid "+$.border,borderRadius:10,padding:"10px 12px",fontSize:14,outline:"none",boxSizing:"border-box",fontFamily:"inherit",background:$.bg,color:$.text}} onClick={e=>e.stopPropagation()}/>
+          </div>
+          <div style={{maxHeight:180,overflowY:"auto",overscrollBehavior:"contain"}}>
+            {filtered.length===0?<div style={{padding:"14px 16px",fontSize:14,color:$.muted,textAlign:"center"}}>No matches</div>:
+            filtered.map(o=><div key={o.v} onClick={(e)=>{e.stopPropagation();onChange(o.v);setOpen(false);setSq("");}} style={{padding:"12px 16px",fontSize:15,color:$.text,cursor:"pointer",background:o.v===value?($.primary+"18"):"transparent",display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"1px solid "+$.border+"80"}} onMouseEnter={e=>e.currentTarget.style.background=o.v===value?($.primary+"22"):($.bg)} onMouseLeave={e=>e.currentTarget.style.background=o.v===value?($.primary+"18"):"transparent"}>
+              <div style={{minWidth:0,overflow:"hidden"}}>
+                <div style={{fontWeight:o.v===value?700:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{o.l}</div>
+                {o.loc&&<div style={{fontSize:12,color:$.muted,marginTop:2}}>📍 {o.loc}</div>}
+              </div>
+              {o.v===value&&<span style={{color:$.primary,fontSize:16,flexShrink:0,marginLeft:8}}>✓</span>}
+            </div>)}
+          </div>
+        </div>}
+      </div>
+    </div>
+  );
+};
+
 function App(){
   const[loggedIn,setLoggedIn]=useState(false);
   const[loginUser,setLoginUser]=useState("");
@@ -69,7 +163,6 @@ function App(){
   const[R,setR]=useState([]);
   const[T,setT]=useState([]);
   const[cfg,setCfg]=useState({biz:"Fertilizer Brokerage",owner:"",wRate:50,rRate:50});
-  const cfgSaveTimeout=useRef(null);
   const[tab,setTab]=useState("home");
   const[form,setForm]=useState(null);
   const[edit,setEdit]=useState(null);
@@ -78,6 +171,7 @@ function App(){
   const[detail,setDetail]=useState(null);
   const[toast,setToast]=useState("");
   const[loading,setLoading]=useState(false);
+  const[saving,setSaving]=useState(false);
   const[bulkText,setBulkText]=useState("");
   const[bulkPreview,setBulkPreview]=useState([]);
   const[bulkImporting,setBulkImporting]=useState(false);
@@ -86,53 +180,41 @@ function App(){
   const[oldPw,setOldPw]=useState("");
   const[newPw,setNewPw]=useState("");
   const[confirmPw,setConfirmPw]=useState("");
+  const[fW,setFW]=useState("");
+  const[fR,setFR]=useState("");
+  const[fDateFrom,setFDateFrom]=useState("");
+  const[fDateTo,setFDateTo]=useState("");
   const fileRef=useRef(null);
+  const cfgTimer=useRef(null);
 
-  const LT={primary:"#2563eb",primaryLight:"#dbeafe",primaryDark:"#1d4ed8",success:"#059669",successLight:"#d1fae5",warn:"#d97706",warnLight:"#fef3c7",danger:"#dc2626",dangerLight:"#fee2e2",purple:"#7c3aed",purpleLight:"#ede9fe",bg:"#f1f5f9",card:"#ffffff",text:"#0f172a",muted:"#64748b",border:"#e2e8f0"};
-  const DT={primary:"#3b82f6",primaryLight:"#1e3a5f",primaryDark:"#2563eb",success:"#10b981",successLight:"#064e3b",warn:"#f59e0b",warnLight:"#451a03",danger:"#ef4444",dangerLight:"#450a0a",purple:"#8b5cf6",purpleLight:"#2e1065",bg:"#0f172a",card:"#1e293b",text:"#f1f5f9",muted:"#94a3b8",border:"#334155"};
+  const LT={primary:"#2563eb",primaryLight:"#dbeafe",primaryDark:"#1d4ed8",success:"#059669",successLight:"#d1fae5",warn:"#d97706",warnLight:"#fef3c7",danger:"#dc2626",dangerLight:"#fee2e2",purple:"#7c3aed",purpleLight:"#ede9fe",bg:"#f1f5f9",card:"#ffffff",text:"#0f172a",muted:"#64748b",border:"#e2e8f0",dark:false};
+  const DT={primary:"#60a5fa",primaryLight:"#1e3a5f",primaryDark:"#3b82f6",success:"#34d399",successLight:"#064e3b",warn:"#fbbf24",warnLight:"#451a03",danger:"#f87171",dangerLight:"#450a0a",purple:"#a78bfa",purpleLight:"#2e1065",bg:"#0c0f1a",card:"#151926",text:"#e8eaf0",muted:"#7c849b",border:"#232940",dark:true};
   const $=dark?DT:LT;
-  const IS={width:"100%",border:"1.5px solid "+$.border,borderRadius:12,padding:"14px 16px",fontSize:16,outline:"none",boxSizing:"border-box",fontFamily:"inherit",background:$.card,color:$.text,WebkitAppearance:"none"};
+  const IS={width:"100%",border:"1.5px solid "+$.border,borderRadius:12,padding:"14px 16px",fontSize:16,outline:"none",boxSizing:"border-box",fontFamily:"inherit",background:dark?"#1a1f30":$.card,color:$.text,WebkitAppearance:"none",transition:"border-color .2s,box-shadow .2s"};
 
-  useEffect(()=>{if(!loggedIn||!sheet.ok())return;(async()=>{setLoading(true);const[w,r,t,s]=await Promise.all([sheet.get("Wholesalers"),sheet.get("Retailers"),sheet.get("Transactions"),sheet.get("Settings")]);setW(w);setR(r);setT(t);if(s&&s.length>0){const row=s[0];setCfg({biz:row.biz||"Fertilizer Brokerage",owner:row.owner||"",wRate:row.wRate||50,rRate:row.rRate||50});if(row.users){try{const saved=JSON.parse(row.users);if(Array.isArray(saved)&&saved.length>0){USERS=saved;const updated=saved.find(u=>u.username.toLowerCase()===currentUser?.username?.toLowerCase());if(updated)setCurrentUser(updated);}}catch{}}}setLoading(false);})();},[loggedIn]);
+  useEffect(()=>{(async()=>{if(!sheet.ok())return;try{const s=await sheet.get("Settings");if(s?.length>0&&s[0].users){const u=JSON.parse(s[0].users);if(Array.isArray(u)&&u.length>0)USERS=u;}}catch{}})();},[]);
+  useEffect(()=>{if(!loggedIn||!sheet.ok())return;(async()=>{setLoading(true);const[w,r,t,s]=await Promise.all([sheet.get("Wholesalers"),sheet.get("Retailers"),sheet.get("Transactions"),sheet.get("Settings")]);setW(w);setR(r);setT(t);if(s?.length>0){const row=s[0];setCfg({biz:row.biz||"Fertilizer Brokerage",owner:row.owner||"",wRate:row.wRate||50,rRate:row.rRate||50});if(row.users){try{const u=JSON.parse(row.users);if(Array.isArray(u)&&u.length>0){USERS=u;const me=u.find(x=>x.username.toLowerCase()===currentUser?.username?.toLowerCase());if(me)setCurrentUser(me);}}catch{}}}setLoading(false);})();},[loggedIn]);
 
-  const updateCfg=(newCfg)=>{
-    setCfg(newCfg);
-    if(cfgSaveTimeout.current)clearTimeout(cfgSaveTimeout.current);
-    cfgSaveTimeout.current=setTimeout(async()=>{
-      if(!sheet.ok())return;
-      await sheet.put("Settings","settings",{biz:newCfg.biz||"",owner:newCfg.owner||"",wRate:newCfg.wRate||0,rRate:newCfg.rRate||0});
-    },1500);
-  };
   const flash=(m)=>{setToast(m);setTimeout(()=>setToast(""),2500);};
+  const withSave=async fn=>{setSaving(true);await fn();setSaving(false);};
+  const saveCfg=nc=>{setCfg(nc);if(cfgTimer.current)clearTimeout(cfgTimer.current);cfgTimer.current=setTimeout(()=>{if(sheet.ok())sheet.put("Settings","settings",{biz:nc.biz||"",owner:nc.owner||"",wRate:nc.wRate||0,rRate:nc.rRate||0});},1500);};
   const nm=(type,id)=>(type==="w"?W:R).find(p=>p.id===id)?.name||"—";
   const gp=(type,id)=>(type==="w"?W:R).find(p=>p.id===id);
-  const yT=T.filter(t=>t.date?.startsWith(yr));
+  const curMonth=new Date().getMonth();const curYear=new Date().getFullYear();
+  const fyStart=curMonth>=3?curYear:curYear-1;
+  const allFYs=[...new Set(T.map(t=>{if(!t.date)return null;const d=new Date(t.date);const m=d.getMonth();const y=d.getFullYear();return m>=3?y:y-1;}).filter(Boolean).concat([fyStart]))].sort().reverse();
+  const[fy,setFy]=useState(fyStart);
+  const fyFilter=(t)=>{if(!t.date)return false;const d=new Date(t.date);const m=d.getMonth();const y=d.getFullYear();const tfy=m>=3?y:y-1;return tfy===fy;};
+  const yT=T.filter(fyFilter);
   const biz=yT.reduce((s,t)=>s+Number(t.quantity||t.qty||0),0);
   const comm=yT.reduce((s,t)=>s+Number(t.wholesalerCommission||t.wc||0)+Number(t.retailerCommission||t.rc||0),0);
   const pend=yT.filter(t=>t.status==="pending");
-  const years=[...new Set(T.map(t=>t.date?.slice(0,4)).concat([String(new Date().getFullYear())]))].filter(Boolean).sort().reverse();
   const calc=(e)=>{const a=Number(e.qty||0)*Number(e.rate||0);const t=Number(e.qty||0);return{...e,amt:a,wc:Math.round(t*Number(cfg.wRate||0)),rc:Math.round(t*Number(cfg.rRate||0))};};
-  const[usersLoaded,setUsersLoaded]=useState(false);
-  useEffect(()=>{if(usersLoaded)return;(async()=>{if(!sheet.ok())return;try{const s=await sheet.get("Settings");if(s&&s.length>0&&s[0].users){const saved=JSON.parse(s[0].users);if(Array.isArray(saved)&&saved.length>0)USERS=saved;}}catch{}setUsersLoaded(true);})();},[]);
   const doLogin=()=>{const u=USERS.find(u=>u.username.toLowerCase()===loginUser.toLowerCase()&&u.password===loginPass);if(u){setCurrentUser(u);setLoggedIn(true);setLoginErr("");setProfName(u.name);}else setLoginErr("Invalid credentials");};
-  const saveProfile=()=>{
-    let changed=false;
-    if(profName.trim()){const i=USERS.findIndex(u=>u.username===currentUser.username);if(i>=0){USERS[i].name=profName.trim();changed=true;}setCurrentUser({...currentUser,name:profName.trim()});}
-    if(oldPw&&newPw&&confirmPw){
-      if(oldPw!==currentUser.password){flash("Wrong password");return;}
-      if(newPw!==confirmPw){flash("Mismatch");return;}
-      const i=USERS.findIndex(u=>u.username===currentUser.username);
-      if(i>=0){USERS[i].password=newPw;changed=true;}
-      setCurrentUser({...currentUser,password:newPw});
-      setOldPw("");setNewPw("");setConfirmPw("");
-      flash("Password updated!");
-    }else flash("Saved!");
-    if(changed&&sheet.ok()){sheet.put("Settings","settings",{users:JSON.stringify(USERS)});}
-    setEditProfile(false);
-  };
-  const saveParty=async()=>{if(!edit?.name?.trim())return;const isW=edit._t==="w";const sh=isW?"Wholesalers":"Retailers";const[list,set]=isW?[W,setW]:[R,setR];const row={id:edit.id||ID(),name:edit.name,phone:edit.phone||"",location:edit.location||"",gst:edit.gst||"",notes:edit.notes||""};if(edit.id){set(list.map(p=>p.id===edit.id?row:p));await sheet.put(sh,edit.id,row);}else{set([...list,row]);await sheet.add(sh,row);}setForm(null);setEdit(null);flash(edit.id?"Updated":"Added");};
+  const saveProfile=()=>{let ch=false;if(profName.trim()){const i=USERS.findIndex(u=>u.username===currentUser.username);if(i>=0){USERS[i].name=profName.trim();ch=true;}setCurrentUser({...currentUser,name:profName.trim()});}if(oldPw&&newPw&&confirmPw){if(oldPw!==currentUser.password){flash("Wrong password");return;}if(newPw!==confirmPw){flash("Mismatch");return;}const i=USERS.findIndex(u=>u.username===currentUser.username);if(i>=0){USERS[i].password=newPw;ch=true;}setCurrentUser({...currentUser,password:newPw});setOldPw("");setNewPw("");setConfirmPw("");flash("Password updated!");}else flash("Saved!");if(ch&&sheet.ok())sheet.put("Settings","settings",{users:JSON.stringify(USERS)});setEditProfile(false);};
+  const saveParty=()=>withSave(async()=>{if(!edit?.name?.trim())return;const isW=edit._t==="w";const sh=isW?"Wholesalers":"Retailers";const[list,set]=isW?[W,setW]:[R,setR];const row={id:edit.id||ID(),name:edit.name,phone:edit.phone||"",location:edit.location||"",gst:edit.gst||"",notes:edit.notes||""};if(edit.id){set(list.map(p=>p.id===edit.id?row:p));await sheet.put(sh,edit.id,row);}else{set([...list,row]);await sheet.add(sh,row);}setForm(null);setEdit(null);flash(edit.id?"Updated":"Added");});
   const delParty=async(type,id)=>{if(!confirm("Delete?"))return;const[sh,list,set]=type==="w"?["Wholesalers",W,setW]:["Retailers",R,setR];set(list.filter(p=>p.id!==id));await sheet.del(sh,id);if(detail?.id===id)setDetail(null);flash("Removed");};
-  const saveTxn=async()=>{if(!edit?.wid||!edit?.rid||!edit?.product)return;const row={id:edit.id||ID(),date:edit.date,wholesalerId:edit.wid,retailerId:edit.rid,product:edit.product,quantity:edit.qty,unit:"Tons",rate:edit.rate,amount:edit.amt,wholesalerCommission:edit.wc,retailerCommission:edit.rc,status:edit.status,notes:edit.notes||""};if(edit.id){setT(T.map(t=>t.id===edit.id?row:t));await sheet.put("Transactions",edit.id,row);}else{setT([...T,row]);await sheet.add("Transactions",row);}setForm(null);setEdit(null);flash(edit.id?"Updated":"Saved");};
+  const saveTxn=()=>withSave(async()=>{if(!edit?.wid||!edit?.rid||!edit?.product)return;const row={id:edit.id||ID(),date:edit.date,wholesalerId:edit.wid,retailerId:edit.rid,product:edit.product,quantity:edit.qty,unit:"Tons",rate:edit.rate,amount:edit.amt,wholesalerCommission:edit.wc,retailerCommission:edit.rc,status:edit.status,notes:edit.notes||""};if(edit.id){setT(T.map(t=>t.id===edit.id?row:t));await sheet.put("Transactions",edit.id,row);}else{setT([...T,row]);await sheet.add("Transactions",row);}setForm(null);setEdit(null);flash(edit.id?"Updated":"Saved");});
   const delTxn=async(id)=>{if(!confirm("Delete?"))return;setT(T.filter(t=>t.id!==id));await sheet.del("Transactions",id);flash("Removed");};
   const toggleTxn=async(t)=>{const ns=t.status==="collected"?"pending":"collected";setT(T.map(x=>x.id===t.id?{...x,status:ns}:x));await sheet.put("Transactions",t.id,{status:ns});};
   const openNewTxn=()=>{setEdit({id:"",date:new Date().toISOString().slice(0,10),wid:detail?.type==="w"?detail.id:"",rid:detail?.type==="r"?detail.id:"",product:"",qty:"",rate:"",amt:0,wc:0,rc:0,status:"pending",notes:""});setForm("txn");};
@@ -141,20 +223,21 @@ function App(){
   const genReport=(party,type)=>{const txns=yT.filter(t=>type==="w"?t.wholesalerId===party.id:t.retailerId===party.id);generatePDF(party.name,type,party.location,txns,yr,nm,gp,cfg);};
   const parseBulk=(text)=>{const lines=text.split("\n").map(l=>l.trim()).filter(Boolean);const p=[];for(const line of lines){const parts=line.split(/[,\t|;]+/).map(s=>s.trim()).filter(Boolean);if(parts.length>=1){const name=parts[0];const loc=parts[1]||"";const exists=R.some(r=>r.name.toLowerCase()===name.toLowerCase());const dup=p.some(x=>x.name.toLowerCase()===name.toLowerCase());if(!dup&&name)p.push({name,location:loc,exists});}}return p;};
   const handleFile=async(e)=>{const f=e.target.files?.[0];if(!f)return;try{const t=await f.text();setBulkText(t);setBulkPreview(parseBulk(t));}catch{flash("Error");}e.target.value="";};
-  const doBulkImport=async()=>{const add=bulkPreview.filter(p=>!p.exists);if(!add.length){flash("No new");return;}setBulkImporting(true);const rows=add.map(p=>({id:ID(),name:p.name,phone:"",location:p.location,gst:"",notes:""}));setR(prev=>[...prev,...rows]);if(sheet.ok())await sheet.addBulk("Retailers",rows);setBulkImporting(false);setBulkText("");setBulkPreview([]);setForm(null);flash(rows.length+" added!");};
+  const doBulkImport=()=>withSave(async()=>{const add=bulkPreview.filter(p=>!p.exists);if(!add.length){flash("No new");return;}const rows=add.map(p=>({id:ID(),name:p.name,phone:"",location:p.location,gst:"",notes:""}));setR(prev=>[...prev,...rows]);if(sheet.ok())await sheet.addBulk("Retailers",rows);setBulkText("");setBulkPreview([]);setForm(null);flash(rows.length+" added!");});
+  const yrSel=<select className="sel-hover" value={fy} onChange={e=>setFy(Number(e.target.value))} style={{border:"1.5px solid "+$.border,borderRadius:12,padding:"8px 12px",fontSize:14,fontWeight:600,background:$.card,color:$.text,cursor:"pointer"}}>{allFYs.map(y=><option key={y} value={y}>FY {y}-{String(y+1).slice(2)}</option>)}</select>;
   const closeForm=()=>{setForm(null);setEdit(null);};
-  const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  const mData=months.map((m,i)=>{const mt=yT.filter(t=>Number(t.date?.slice(5,7))===i+1);return{m,biz:mt.reduce((s,t)=>s+Number(t.quantity||t.qty||0),0),n:mt.length};});
+  const months=["Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec","Jan","Feb","Mar"];
+  const mData=months.map((m,i)=>{const mi=(i+4)%12;const mYear=i<9?fy:fy+1;const mt=yT.filter(t=>{const d=new Date(t.date);return d.getMonth()===mi&&d.getFullYear()===mYear;});return{m,biz:mt.reduce((s,t)=>s+Number(t.quantity||t.qty||0),0),n:mt.length};});
   const mMax=Math.max(...mData.map(d=>d.biz),1);
 
   const sp=(s)=>{const m={pending:[$.warnLight,$.warn],collected:[$.successLight,$.success],cancelled:[$.dangerLight,$.danger]};const[bg,fg]=m[s]||m.pending;return <span style={{background:bg,color:fg,fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:99,textTransform:"uppercase"}}>{s==="pending"?"credit":s}</span>;};
   const av=(emoji="🌾",bg=$.primaryLight,size=44)=><div style={{width:size,height:size,borderRadius:size*.3,background:bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:size*.45,flexShrink:0}}>{emoji}</div>;
-  const met=(icon,label,value,accent)=><div style={{background:accent+"18",borderRadius:16,padding:"14px 12px",textAlign:"center",flex:1,minWidth:0}}><div style={{fontSize:20,marginBottom:2}}>{icon}</div><div style={{fontSize:17,fontWeight:800,color:accent,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{value}</div><div style={{fontSize:11,color:$.muted,fontWeight:600,marginTop:2}}>{label}</div></div>;
-  const btn=(text,onClick,bg=$.primary,fg="#fff",full=false,small=false,extra={})=><button onClick={onClick} style={{background:bg,color:fg,border:"none",borderRadius:14,padding:small?"10px 18px":"15px 24px",fontSize:small?14:16,fontWeight:700,cursor:"pointer",display:"inline-flex",alignItems:"center",justifyContent:"center",gap:8,width:full?"100%":"auto",fontFamily:"inherit",...extra}}>{text}</button>;
-  const gb=(text,onClick,color=$.muted)=><button onClick={onClick} style={{background:"none",border:"none",color,fontSize:14,fontWeight:600,cursor:"pointer",padding:"8px 12px",borderRadius:10,fontFamily:"inherit"}}>{text}</button>;
-  const cd=(children,onClick,style={})=><div onClick={onClick} style={{background:$.card,borderRadius:16,padding:16,...style,...(onClick?{cursor:"pointer"}:{})}}>{children}</div>;
-  const inp=(label,props)=><div style={{marginBottom:16}}><label style={{display:"block",fontSize:13,fontWeight:600,color:$.muted,marginBottom:6}}>{label}</label><input style={IS} {...props}/></div>;
-  const sel=(label,options,props)=><div style={{marginBottom:16}}><label style={{display:"block",fontSize:13,fontWeight:600,color:$.muted,marginBottom:6}}>{label}</label><select style={{...IS,color:props.value?$.text:$.muted}} {...props}><option value="">Choose...</option>{options.map(o=><option key={o.v} value={o.v}>{o.l}</option>)}</select></div>;
+  const met=(icon,label,value,accent)=><div className="met-hover" style={{background:accent+"18",borderRadius:16,padding:"14px 12px",textAlign:"center",flex:1,minWidth:0}}><div style={{fontSize:20,marginBottom:2}}>{icon}</div><div style={{fontSize:17,fontWeight:800,color:accent,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{value}</div><div style={{fontSize:11,color:$.muted,fontWeight:600,marginTop:2}}>{label}</div></div>;
+  const btn=(text,onClick,bg=$.primary,fg="#fff",full=false,small=false,extra={})=>{const cls=bg===$.primary?"btn-primary":bg===$.success?"btn-success-h":bg===$.danger?"btn-danger-h":bg===$.purple?"btn-purple-h":"btn-ghost";return <button className={cls} onClick={onClick} style={{background:bg,color:fg,border:"none",borderRadius:14,padding:small?"10px 18px":"15px 24px",fontSize:small?14:16,fontWeight:700,cursor:"pointer",display:"inline-flex",alignItems:"center",justifyContent:"center",gap:8,width:full?"100%":"auto",fontFamily:"inherit",...extra}}>{saving&&<span style={{width:16,height:16,border:"2px solid rgba(255,255,255,0.3)",borderTopColor:fg,borderRadius:99,display:"inline-block",animation:"spin .5s linear infinite"}}/>}{text}</button>;};
+  const gb=(text,onClick,color=$.muted)=><button className="btn-action" onClick={onClick} style={{background:"none",border:"none",color,fontSize:14,fontWeight:600,cursor:"pointer",padding:"8px 12px",fontFamily:"inherit"}}>{text}</button>;
+  const cd=(children,onClick,style={})=><div className="card-hover" onClick={onClick} style={{background:$.card,borderRadius:16,padding:16,...style,...(onClick?{cursor:"pointer"}:{})}}>{children}</div>;
+  const inp=(label,props)=><div style={{marginBottom:16}}><label style={{display:"block",fontSize:13,fontWeight:600,color:$.muted,marginBottom:6}}>{label}</label><input className="inp-glow" style={IS} {...props}/></div>;
+  const sel=(label,options,props)=><div style={{marginBottom:16}}><label style={{display:"block",fontSize:13,fontWeight:600,color:$.muted,marginBottom:6}}>{label}</label><select className="inp-glow sel-hover" style={{...IS,color:props.value?$.text:$.muted}} {...props}><option value="">Choose...</option>{options.map(o=><option key={o.v} value={o.v}>{o.l}</option>)}</select></div>;
 
   if(!loggedIn)return(
     <div style={{minHeight:"100vh",background:"linear-gradient(135deg,#1e3a5f,#2563eb,#1d4ed8)",display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
@@ -178,7 +261,7 @@ function App(){
 
   const renderHome=()=>(
     <div>
-      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}><div><div style={{fontSize:22,fontWeight:900,color:$.text}}>{cfg.biz}</div><div style={{fontSize:13,color:$.muted,marginTop:2}}>Hi {currentUser?.name} · {yr}</div></div><div style={{display:"flex",gap:8,alignItems:"center"}}><select value={yr} onChange={e=>setYr(e.target.value)} style={{border:"1.5px solid "+$.border,borderRadius:12,padding:"8px 12px",fontSize:14,fontWeight:600,background:$.card,color:$.text}}>{years.map(y=><option key={y}>{y}</option>)}</select><button onClick={()=>{setLoggedIn(false);setLoginUser("");setLoginPass("");}} style={{width:36,height:36,borderRadius:99,border:"1.5px solid "+$.border,background:$.card,fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>🚪</button></div></div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}><div><div style={{fontSize:22,fontWeight:900,color:$.text}}>{cfg.biz}</div><div style={{fontSize:13,color:$.muted,marginTop:2}}>Hi {currentUser?.name} · {yr}</div></div><div style={{display:"flex",gap:8,alignItems:"center"}}>{yrSel}<button className="btn-action" onClick={()=>{setLoggedIn(false);setLoginUser("");setLoginPass("");}} style={{width:36,height:36,borderRadius:99,border:"1.5px solid "+$.border,background:$.card,fontSize:16,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>🚪</button></div></div>
       <div style={{display:"flex",gap:10,marginBottom:20}}>{met("💼","Business",biz+" T",$.primary)}{met("💰","Commission",INR(comm),$.success)}{met("⏳","Credit",pend.length,$.warn)}</div>
       {cd(<div><div style={{fontWeight:800,fontSize:15,marginBottom:14,color:$.text}}>Monthly Revenue</div><div style={{display:"flex",alignItems:"flex-end",gap:4,height:100}}>{mData.map((d,i)=><div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3}}><div style={{width:"100%",display:"flex",flexDirection:"column",justifyContent:"flex-end",height:72}}><div style={{width:"100%",background:"linear-gradient(to top,"+$.primary+","+$.primaryDark+")",borderRadius:"4px 4px 0 0",height:Math.max((d.biz/mMax)*100,d.biz>0?6:0)+"%"}}/></div><span style={{fontSize:9,color:$.muted,fontWeight:700}}>{d.m}</span></div>)}</div></div>,null,{marginBottom:20})}
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}><span style={{fontWeight:800,fontSize:15,color:$.text}}>Recent Transactions</span>{gb("View All →",()=>setTab("txns"),$.primary)}</div>
@@ -188,12 +271,18 @@ function App(){
   );
 
   const renderTxns=()=>{
-    const list=yT.filter(t=>{if(!q)return true;const s=q.toLowerCase();return nm("w",t.wholesalerId).toLowerCase().includes(s)||nm("r",t.retailerId).toLowerCase().includes(s)||t.product?.toLowerCase().includes(s);}).slice().reverse();
+    const list=yT.filter(t=>{if(!q)return true;const s=q.toLowerCase();return nm("w",t.wholesalerId).toLowerCase().includes(s)||nm("r",t.retailerId).toLowerCase().includes(s)||t.product?.toLowerCase().includes(s);}).filter(t=>{
+      if(fW&&String(t.wholesalerId||"").trim()!==String(fW).trim())return false;
+      if(fR&&String(t.retailerId||"").trim()!==String(fR).trim())return false;
+      if(fDateFrom){const d=String(t.date||"").slice(0,10);if(!d||d<fDateFrom)return false;}
+      if(fDateTo){const d=String(t.date||"").slice(0,10);if(!d||d>fDateTo)return false;}
+      return true;
+    }).slice().reverse();
     const vol=list.reduce((s,t)=>s+Number(t.quantity||t.qty||0),0);
     const cm=list.reduce((s,t)=>s+Number(t.wholesalerCommission||t.wc||0)+Number(t.retailerCommission||t.rc||0),0);
     return(
       <div>
-        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}><div style={{fontSize:22,fontWeight:900,color:$.text}}>Transactions</div><select value={yr} onChange={e=>setYr(e.target.value)} style={{border:"1.5px solid "+$.border,borderRadius:12,padding:"8px 12px",fontSize:14,fontWeight:600,background:$.card,color:$.text}}>{years.map(y=><option key={y}>{y}</option>)}</select></div>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}><div style={{fontSize:22,fontWeight:900,color:$.text}}>Transactions</div>{yrSel}</div>
         <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search..." style={{...IS,marginBottom:12}}/>
         <div style={{display:"flex",gap:8,marginBottom:16}}>{met("📊","Count",list.length,$.primary)}{met("💼","Volume",vol+" T",$.success)}{met("💰","Comm",INR(cm),$.purple)}</div>
         {list.length===0?cd(<div style={{textAlign:"center",padding:40}}><div style={{fontSize:48}}>💰</div><div style={{fontWeight:700,color:$.muted}}>No transactions</div>{btn("+ New",openNewTxn,$.primary,"#fff",false,false,{marginTop:16})}</div>):
@@ -241,7 +330,7 @@ function App(){
     const sf=(list)=>list.filter(p=>!q||p.name.toLowerCase().includes(q.toLowerCase())||p.location?.toLowerCase().includes(q.toLowerCase()));
     return(
       <div>
-        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}><div style={{fontSize:22,fontWeight:900,color:$.text}}>Reports</div><select value={yr} onChange={e=>setYr(e.target.value)} style={{border:"1.5px solid "+$.border,borderRadius:12,padding:"8px 12px",fontSize:14,fontWeight:600,background:$.card,color:$.text}}>{years.map(y=><option key={y}>{y}</option>)}</select></div>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20}}><div style={{fontSize:22,fontWeight:900,color:$.text}}>Reports</div>{yrSel}</div>
         <div style={{display:"flex",gap:8,marginBottom:20}}>{met("💼","Business",biz+" T",$.primary)}{met("💰","Commission",INR(comm),$.success)}{met("✅","Collected",yT.filter(t=>t.status==="collected").length+"/"+yT.length,$.purple)}</div>
         {cd(<div><div style={{fontWeight:800,fontSize:15,color:$.text,marginBottom:10}}>Monthly</div>{mData.filter(d=>d.n>0).map((d,i)=><div key={i} style={{display:"flex",justifyContent:"space-between",padding:"10px 0",borderBottom:"1px solid "+$.border}}><span style={{fontWeight:600,color:$.text}}>{d.m}</span><div style={{display:"flex",gap:16,fontSize:14}}><span style={{color:$.text}}>{d.biz} T</span><span style={{color:$.muted}}>{d.n} txns</span></div></div>)}{mData.filter(d=>d.n>0).length===0&&<div style={{textAlign:"center",padding:20,color:$.muted}}>No data</div>}</div>,null,{marginBottom:16})}
         {cd(<div><div style={{fontWeight:800,fontSize:15,color:$.text,marginBottom:4}}>📄 Statements</div><div style={{fontSize:12,color:$.muted,marginBottom:12}}>Download per party</div><input value={q} onChange={e=>setQ(e.target.value)} placeholder="🔍 Search..." style={{...IS,marginBottom:14,fontSize:14}}/>
@@ -259,7 +348,7 @@ function App(){
     <div>
       <div style={{fontSize:22,fontWeight:900,color:$.text,marginBottom:20}}>👤 Profile</div>
       {cd(<div><div style={{display:"flex",alignItems:"center",gap:14}}><div style={{width:60,height:60,borderRadius:99,background:$.primaryLight,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,fontWeight:900,color:$.primary}}>{currentUser?.name?.[0]}</div><div style={{flex:1}}><div style={{fontSize:20,fontWeight:900,color:$.text}}>{currentUser?.name}</div><div style={{fontSize:13,color:$.muted}}>@{currentUser?.username}</div></div><span style={{fontSize:20,color:$.muted}}>✏️</span></div><div style={{fontSize:12,color:$.primary,fontWeight:600,marginTop:10,textAlign:"center"}}>Tap to edit</div></div>,()=>{setProfName(currentUser?.name||"");setOldPw("");setNewPw("");setConfirmPw("");setEditProfile(true);},{marginBottom:16})}
-      {cd(<div><div style={{fontWeight:800,color:$.text,marginBottom:16}}>Business Info</div>{inp("Business Name",{value:cfg.biz,onChange:e=>updateCfg({...cfg,biz:e.target.value})})}{inp("Owner Name",{value:cfg.owner,onChange:e=>updateCfg({...cfg,owner:e.target.value})})}<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{inp("W Comm (₹/T)",{type:"number",value:cfg.wRate,onChange:e=>updateCfg({...cfg,wRate:e.target.value})})}{inp("R Comm (₹/T)",{type:"number",value:cfg.rRate,onChange:e=>updateCfg({...cfg,rRate:e.target.value})})}</div></div>,null,{marginBottom:16})}
+      {cd(<div><div style={{fontWeight:800,color:$.text,marginBottom:16}}>Business Info</div>{inp("Business Name",{value:cfg.biz,onChange:e=>saveCfg({...cfg,biz:e.target.value})})}{inp("Owner Name",{value:cfg.owner,onChange:e=>saveCfg({...cfg,owner:e.target.value})})}<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{inp("W Comm (₹/T)",{type:"number",value:cfg.wRate,onChange:e=>saveCfg({...cfg,wRate:e.target.value})})}{inp("R Comm (₹/T)",{type:"number",value:cfg.rRate,onChange:e=>saveCfg({...cfg,rRate:e.target.value})})}</div></div>,null,{marginBottom:16})}
       {cd(<div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}><div><div style={{fontWeight:800,color:$.text}}>🌙 Dark Mode</div><div style={{fontSize:12,color:$.muted,marginTop:2}}>Easier on eyes</div></div><button onClick={()=>setDark(!dark)} style={{width:56,height:30,borderRadius:15,border:"none",background:dark?$.primary:$.border,cursor:"pointer",position:"relative",transition:"background .2s"}}><div style={{width:24,height:24,borderRadius:12,background:"#fff",position:"absolute",top:3,left:dark?29:3,transition:"left .2s",boxShadow:"0 1px 4px rgba(0,0,0,0.2)"}}/></button></div>,null,{marginBottom:16})}
       {cd(<div><div style={{fontWeight:800,color:$.danger,marginBottom:10}}>Danger Zone</div><div style={{display:"flex",gap:10,flexWrap:"wrap"}}>{btn("Reset",()=>{if(confirm("Delete ALL?")){setW([]);setR([]);setT([]);setTab("home");flash("Cleared");}},$.danger,"#fff",false,true)}{btn("Logout",()=>{setLoggedIn(false);setLoginUser("");setLoginPass("");},$.bg,$.danger,false,true)}</div></div>,null,{border:"1.5px solid "+$.dangerLight})}
     </div>
@@ -268,7 +357,8 @@ function App(){
   const tabList=[{id:"home",icon:"🏠",label:"Home"},{id:"txns",icon:"💰",label:"Txns"},{id:"wholesale",icon:"🏭",label:"Wholesale"},{id:"retail",icon:"🏪",label:"Retail"},{id:"reports",icon:"📈",label:"Reports"},{id:"profile",icon:"👤",label:"Profile"}];
 
   return(
-    <div style={{minHeight:"100vh",background:$.bg,transition:"background .3s"}}>
+    <div className={dark?"dark":""} style={{minHeight:"100vh",background:$.bg,transition:"background .3s"}}>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
       {toast&&<div style={{position:"fixed",top:16,left:"50%",transform:"translateX(-50%)",zIndex:200,background:$.success,color:"#fff",padding:"10px 24px",borderRadius:14,fontWeight:700,fontSize:14,boxShadow:"0 8px 24px rgba(0,0,0,0.2)"}}>{toast}</div>}
       {loading&&<div style={{position:"fixed",inset:0,zIndex:300,background:$.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}}><div style={{fontSize:56,marginBottom:16}}>🌾</div><div style={{fontWeight:800,fontSize:18,color:$.text}}>Loading...</div></div>}
       <div style={{padding:"16px 16px 100px",maxWidth:540,margin:"0 auto"}}>
@@ -279,15 +369,27 @@ function App(){
         {tab==="reports"&&renderReports()}
         {tab==="profile"&&renderProfile()}
       </div>
-      {["home","txns","wholesale","retail"].includes(tab)&&<button onClick={tab==="wholesale"?()=>openNewParty("w"):tab==="retail"?()=>openNewParty("r"):openNewTxn} style={{position:"fixed",bottom:84,right:20,zIndex:50,width:58,height:58,borderRadius:99,border:"none",background:"linear-gradient(135deg,"+$.primary+","+$.primaryDark+")",color:"#fff",fontSize:28,cursor:"pointer",boxShadow:"0 6px 20px "+$.primary+"60",display:"flex",alignItems:"center",justifyContent:"center"}}>+</button>}
-      <div style={{position:"fixed",bottom:0,left:0,right:0,background:$.card,borderTop:"1px solid "+$.border,zIndex:90,paddingBottom:"env(safe-area-inset-bottom)"}}><div style={{display:"flex",maxWidth:540,margin:"0 auto"}}>{tabList.map(t=><button key={t.id} onClick={()=>{setTab(t.id);setDetail(null);setQ("");}} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",padding:"8px 0 6px",border:"none",background:"none",cursor:"pointer",color:tab===t.id?$.primary:$.muted}}><span style={{fontSize:20,lineHeight:1}}>{t.icon}</span><span style={{fontSize:10,fontWeight:700,marginTop:3}}>{t.label}</span>{tab===t.id&&<div style={{width:20,height:3,borderRadius:2,background:$.primary,marginTop:2}}/>}</button>)}</div></div>
+      {["home","txns","wholesale","retail"].includes(tab)&&<button className="fab-hover" onClick={tab==="wholesale"?()=>openNewParty("w"):tab==="retail"?()=>openNewParty("r"):openNewTxn} style={{position:"fixed",bottom:84,right:20,zIndex:50,width:58,height:58,borderRadius:99,border:"none",background:"linear-gradient(135deg,"+$.primary+","+$.primaryDark+")",color:"#fff",fontSize:28,cursor:"pointer",boxShadow:"0 6px 20px "+$.primary+"60",display:"flex",alignItems:"center",justifyContent:"center"}}>+</button>}
+      <div style={{position:"fixed",bottom:0,left:0,right:0,background:$.card,borderTop:"1px solid "+$.border,zIndex:90,paddingBottom:"env(safe-area-inset-bottom)"}}><div style={{display:"flex",maxWidth:540,margin:"0 auto"}}>{tabList.map(t=><button key={t.id} className="nav-btn" onClick={()=>{setTab(t.id);setDetail(null);setQ("");}} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",padding:"8px 0 6px",border:"none",background:"none",cursor:"pointer",color:tab===t.id?$.primary:$.muted}}><span style={{fontSize:20,lineHeight:1,position:"relative",zIndex:1}}>{t.icon}</span><span style={{fontSize:10,fontWeight:700,marginTop:3,position:"relative",zIndex:1}}>{t.label}</span>{tab===t.id&&<div style={{width:20,height:3,borderRadius:2,background:$.primary,marginTop:2,position:"relative",zIndex:1}}/>}</button>)}</div></div>
 
       <ModalShell open={form==="party"} title={edit?.id?"Edit":"Add "+(edit?._t==="w"?"Wholesaler":"Retailer")} onClose={closeForm} bgC={$.card} borderC={$.border} textC={$.text} mutedC={$.muted} bg={$.bg}>
         {edit&&<div>{inp("Name *",{value:edit.name,onChange:e=>setEdit({...edit,name:e.target.value}),placeholder:"Name"})}{inp("Phone",{value:edit.phone,onChange:e=>setEdit({...edit,phone:e.target.value}),placeholder:"Phone",type:"tel"})}{inp("Location",{value:edit.location,onChange:e=>setEdit({...edit,location:e.target.value}),placeholder:"City"})}{inp("GST",{value:edit.gst,onChange:e=>setEdit({...edit,gst:e.target.value}),placeholder:"GST"})}{inp("Notes",{value:edit.notes,onChange:e=>setEdit({...edit,notes:e.target.value}),placeholder:"Notes"})}<div style={{display:"flex",gap:12,marginTop:8}}>{btn("Cancel",closeForm,$.bg,$.muted,true)}{btn(edit.id?"Update":"Add",saveParty,$.primary,"#fff",true)}</div></div>}
       </ModalShell>
 
       <ModalShell open={form==="txn"} title={edit?.id?"Edit Transaction":"New Transaction"} onClose={closeForm} bgC={$.card} borderC={$.border} textC={$.text} mutedC={$.muted} bg={$.bg}>
-        {edit&&<div>{inp("Date *",{type:"date",value:edit.date,onChange:e=>setEdit({...edit,date:e.target.value})})}{sel("Wholesaler *",W.map(w=>({v:w.id,l:w.name})),{value:edit.wid,onChange:e=>setEdit({...edit,wid:e.target.value})})}{sel("Retailer *",R.map(r=>({v:r.id,l:r.name})),{value:edit.rid,onChange:e=>setEdit({...edit,rid:e.target.value})})}{inp("Product *",{value:edit.product,onChange:e=>setEdit({...edit,product:e.target.value}),placeholder:"DAP, Urea..."})}<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{inp("Qty (T)",{type:"number",value:edit.qty,onChange:e=>setEdit(calc({...edit,qty:e.target.value}))})}{inp("Rate (₹/T)",{type:"number",value:edit.rate,onChange:e=>setEdit(calc({...edit,rate:e.target.value}))})}</div><div style={{background:$.primaryLight,borderRadius:14,padding:14,textAlign:"center",marginBottom:16}}><div style={{fontSize:12,color:$.primary,fontWeight:600}}>Amount</div><div style={{fontSize:24,fontWeight:900,color:$.primary}}>{INR(edit.amt)}</div></div><div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{inp("W Comm ₹",{type:"number",value:edit.wc,onChange:e=>setEdit({...edit,wc:e.target.value})})}{inp("R Comm ₹",{type:"number",value:edit.rc,onChange:e=>setEdit({...edit,rc:e.target.value})})}</div><div style={{background:$.successLight,borderRadius:14,padding:14,textAlign:"center",marginBottom:16}}><div style={{fontSize:12,color:$.success,fontWeight:600}}>Total Commission</div><div style={{fontSize:24,fontWeight:900,color:$.success}}>{INR(Number(edit.wc||0)+Number(edit.rc||0))}</div></div>{sel("Status",[{v:"pending",l:"💳 Credit"},{v:"collected",l:"✅ Collected"},{v:"cancelled",l:"❌ Cancelled"}],{value:edit.status,onChange:e=>setEdit({...edit,status:e.target.value})})}{inp("Notes",{value:edit.notes,onChange:e=>setEdit({...edit,notes:e.target.value}),placeholder:"Notes"})}<div style={{display:"flex",gap:12,marginTop:8}}>{btn("Cancel",closeForm,$.bg,$.muted,true)}{btn(edit.id?"Update":"Save",saveTxn,$.success,"#fff",true)}</div></div>}
+        {edit&&<div>
+          {inp("Date *",{type:"date",value:edit.date,onChange:e=>setEdit({...edit,date:e.target.value})})}
+          <SearchSelect label="Wholesaler *" options={W.map(w=>({v:w.id,l:w.name,loc:w.location||""}))} value={edit.wid} onChange={v=>setEdit({...edit,wid:v})} theme={$}/>
+          <SearchSelect label="Retailer *" options={R.map(r=>({v:r.id,l:r.name,loc:r.location||""}))} value={edit.rid} onChange={v=>setEdit({...edit,rid:v})} theme={$}/>
+          {inp("Product *",{value:edit.product,onChange:e=>setEdit({...edit,product:e.target.value}),placeholder:"DAP, Urea..."})}
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{inp("Qty (T)",{type:"number",value:edit.qty,onChange:e=>setEdit(calc({...edit,qty:e.target.value}))})}{inp("Rate (₹/T)",{type:"number",value:edit.rate,onChange:e=>setEdit(calc({...edit,rate:e.target.value}))})}</div>
+          <div style={{background:$.primaryLight,borderRadius:14,padding:14,textAlign:"center",marginBottom:16}}><div style={{fontSize:12,color:$.primary,fontWeight:600}}>Amount</div><div style={{fontSize:24,fontWeight:900,color:$.primary}}>{INR(edit.amt)}</div></div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{inp("W Comm ₹",{type:"number",value:edit.wc,onChange:e=>setEdit({...edit,wc:e.target.value})})}{inp("R Comm ₹",{type:"number",value:edit.rc,onChange:e=>setEdit({...edit,rc:e.target.value})})}</div>
+          <div style={{background:$.successLight,borderRadius:14,padding:14,textAlign:"center",marginBottom:16}}><div style={{fontSize:12,color:$.success,fontWeight:600}}>Total Commission</div><div style={{fontSize:24,fontWeight:900,color:$.success}}>{INR(Number(edit.wc||0)+Number(edit.rc||0))}</div></div>
+          {sel("Status",[{v:"pending",l:"💳 Credit"},{v:"collected",l:"✅ Collected"},{v:"cancelled",l:"❌ Cancelled"}],{value:edit.status,onChange:e=>setEdit({...edit,status:e.target.value})})}
+          {inp("Notes",{value:edit.notes,onChange:e=>setEdit({...edit,notes:e.target.value}),placeholder:"Notes"})}
+          <div style={{display:"flex",gap:12,marginTop:8}}>{btn("Cancel",closeForm,$.bg,$.muted,true)}{btn(edit.id?"Update":"Save",saveTxn,$.success,"#fff",true)}</div>
+        </div>}
       </ModalShell>
 
       <ModalShell open={form==="bulk"} title="📥 Bulk Add Retailers" onClose={()=>{setForm(null);setBulkText("");setBulkPreview([]);}} bgC={$.card} borderC={$.border} textC={$.text} mutedC={$.muted} bg={$.bg}>
